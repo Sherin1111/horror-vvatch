@@ -78,7 +78,40 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 
 ## 5. User Stories
 
-_To be added._
+- As a user, I want to create an account so I can save and manage my personal
+  watchlist.
+
+- As a user, I want to browse horror movies and TV shows so I can discover
+  something new to watch.
+
+- As a user, I want to have a watchlist of horror movies and TV shows so I can
+  track which ones I want to watch, am currently watching, or have already watched.
+
+- As a user, I want to update the watch status of a title so I can keep my
+  watchlist up to date.
+
+- As a user, I want to rate how scary a movie or TV show is using the Ghost
+  Rating system so I can remember how frightening I found it.
+
+- As a user, I want to write a review after watching a title so I can share
+  my thoughts with other horror fans.
+
+- As a user, I want to read other users' reviews so I can decide whether a
+  movie or TV show is worth watching.
+
+### Future User Stories
+
+- As a user, I want to filter media by horror category so I can quickly find
+  the types of horror I enjoy.
+
+- As a user, I want to filter out movies with certain content warnings so I
+  can avoid themes I don't like.
+
+- As a user, I want personalised horror recommendations so I can discover
+  new titles based on my watch history.
+
+- As a user, I want to join discussions about movies and TV shows so I can
+  share theories and discuss endings with other horror fans.
 
 ---
 
