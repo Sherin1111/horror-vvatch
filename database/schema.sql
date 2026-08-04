@@ -60,7 +60,7 @@ category_id INT PRIMARY KEY AUTO_INCREMENT,
 category_name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE media_category (
+CREATE TABLE media_horror_category (
 media_id INT,
 category_id INT,
 PRIMARY KEY(media_id, category_id), 

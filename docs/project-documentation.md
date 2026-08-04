@@ -170,7 +170,7 @@ title, write reviews, and read reviews written by other users.
 
 The project also includes the `horror_category` and `content_warning` tables.
 
-The `media_category` and `media_content_warning` junction tables create
+The `media_horror_category` and `media_content_warning` junction tables create
 many-to-many relationships between media titles and their associated horror
 categories and content warnings.
 
