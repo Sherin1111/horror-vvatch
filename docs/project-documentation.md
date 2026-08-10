@@ -294,6 +294,50 @@ after the core MVP endpoints are complete.
 
 ## 12. Implemented Features
 
+### User Feature
+
+The User feature has been implemented using the same feature-based package structure as the Media feature.
+
+The feature currently includes:
+
+- `User` entity
+- `UserRepository`
+- `UserService`
+- `UserController`
+- CRUD operations (Create, Read, Update and Delete)
+- Search users by username
+- Retrieve a user by email
+- Password validation before creating a user
+- Password hidden from API responses using `@JsonProperty(access = WRITE_ONLY)`
+
+The User API currently supports:
+
+- Creating a new user
+- Retrieving all users
+- Retrieving one user by ID
+- Searching users by username
+- Retrieving a user by email
+- Updating a user's details
+- Deleting a user
+
+The request flow is:
+
+```text
+Client (Postman / React)
+        ↓
+HTTP Request
+        ↓
+UserController
+        ↓
+UserService
+        ↓
+UserRepository
+        ↓
+MySQL Database
+        ↓
+JSON Response
+```
+
 ### Media Feature
 
 The Media feature has been implemented using a feature-based Spring Boot package structure.
@@ -305,7 +349,7 @@ The feature currently includes:
 - `MediaRepository`
 - `MediaService`
 - `MediaController`
-- `Initial media seed data`
+- Initial media seed data
 
 The Media API currently supports:
 
@@ -331,11 +375,72 @@ MySQL Database
 JSON Response
 ```
 
-The Media feature has been fully implemented and tested using Postman.
+---
 
 ## 13. API Testing
 
-The Media API was tested using Postman.
+The User and Media APIs were tested using Postman.
+
+### User API
+
+| Method   | Endpoint                                   | Expected result          | Result |
+| -------- | ------------------------------------------ | ------------------------ | ------ |
+| `POST`   | `/api/users`                               | Create a new user        | Pass   |
+| `GET`    | `/api/users`                               | Retrieve all users       | Pass   |
+| `GET`    | `/api/users/{userId}`                      | Retrieve a single user   | Pass   |
+| `GET`    | `/api/users/search?username=mo`            | Search users by username | Pass   |
+| `GET`    | `/api/users/by-email?email=onyx@email.com` | Retrieve a user by email | Pass   |
+| `PUT`    | `/api/users/{userId}`                      | Update user details      | Pass   |
+| `DELETE` | `/api/users/{userId}`                      | Delete a user            | Pass   |
+| `GET`    | `/api/users/999`                           | Return `404 Not Found`   | Pass   |
+| `POST`   | `/api/users` (without password)            | Return 400 Bad Request   | Pass   |
+
+### Create User
+
+![Postman response showing a successful user creation (201 Created)](images/post-user.png)
+_Creating a new user returns `201 Created`. The password is accepted in the request but is excluded from the JSON response because the field is configured as write-only._
+
+### Retrieve All Users
+
+![Postman response showing all users stored in the database](images/get-all-users.png)
+_Retrieving all users stored in the database returns `200 OK`._
+
+### Retrieve User by ID
+
+![Postman response showing a single user retrieved by ID](images/get-one-user.png)
+_Retrieving an existing user by their ID returns `200 OK` with the user's details._
+
+### Search Users by Username
+
+![Postman response showing users returned using a case-insensitive partial username search](images/get-by-username.png)
+_Searching with the partial username "mo" returns matching users using a case-insensitive search._
+
+### Retrieve User by Email
+
+![Postman response showing a user retrieved using their email address](images/get-by-email.png)
+_Retrieving a user by their email address returns `200 OK` with the matching user's details._
+
+### Update User
+
+![Postman response showing a user's details being updated successfully](images/put-user-name.png)
+_Updating a user's first name returns `200 OK`. Fields not included in the request remain unchanged._
+
+### Delete User
+
+![Postman response showing a successful deletion (204 No Content)](images/delete-user.png)
+_Successfully deleting an existing user returns `204 No Content`._
+
+### User Not Found
+
+![Requesting a user that does not exist returns 404 Not Found](images/get-user-error.png)
+_Requesting a user with an ID that does not exist returns `404 Not Found`._
+
+### Validation Error
+
+![Creating a user without providing a password returns 400 Bad Request](images/post-user-missing-password.png)
+_Attempting to create a user without a password returns `400 Bad Request` because a password is required._
+
+### Media API
 
 | Method | Endpoint                        | Expected result                  | Result |
 | ------ | ------------------------------- | -------------------------------- | ------ |
@@ -345,25 +450,30 @@ The Media API was tested using Postman.
 | `GET`  | `/api/media/search?title=super` | Return titles containing "super" | Pass   |
 | `GET`  | `/api/media/999`                | Return `404 Not Found`           | Pass   |
 
-### Retrieve all media
+### Retrieve All Media
 
 ![Postman response showing all media](images/api-all-media.png)
+_Retrieving all media stored in the database returns `200 OK`._
 
-### Retrieve a media title by ID
+### Retrieve Media by ID
 
 ![Postman response showing one media title](images/api-one-media-title.png)
+_Retrieving an existing media title by its ID returns `200 OK` with the media details._
 
-### Search by title ("witch")
+### Search by Title ("witch")
 
 ![Postman response showing titles containing "witch"](images/api-title-search2.png)
+_Searching for "witch" returns media titles containing the search term using a case-insensitive partial match._
 
-### Search by title ("super")
+### Search by Title ("super")
 
 ![Postman response showing titles containing "super"](images/api-title-search.png)
+_Searching for "super" demonstrates that partial title searches return matching media records._
 
-### Invalid ID (404)
+### Media Not Found
 
 ![Postman response showing `404 Not Found`](images/api-404-not-found.png)
+_Requesting a media title with an ID that does not exist returns `404 Not Found`._
 
 ---
 
