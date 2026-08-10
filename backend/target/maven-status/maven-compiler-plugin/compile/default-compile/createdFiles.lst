@@ -2,5 +2,9 @@ com/horrorvvatch/backend/media/MediaRepository.class
 com/horrorvvatch/backend/media/Media.class
 com/horrorvvatch/backend/media/MediaType.class
 com/horrorvvatch/backend/media/MediaController.class
+com/horrorvvatch/backend/user/UserService.class
+com/horrorvvatch/backend/user/UserController.class
+com/horrorvvatch/backend/user/UserRepository.class
+com/horrorvvatch/backend/user/User.class
 com/horrorvvatch/backend/media/MediaService.class
 com/horrorvvatch/backend/BackendApplication.class

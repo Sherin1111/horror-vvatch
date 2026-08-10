@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 public class MediaService {
     
     private final MediaRepository mediaRepository;
-        public MediaService(MediaRepository mediaRepository) {
+    
+    public MediaService(MediaRepository mediaRepository) {
             this.mediaRepository = mediaRepository;
     }
 
@@ -20,7 +21,7 @@ public class MediaService {
         }
 
         //Get media by id 
-        public Media getMediaId(Long mediaId) {
+        public Media getMediaId(Integer mediaId) {
             return mediaRepository.findById(mediaId)
             .orElseThrow(() -> new NoSuchElementException("No Media with id: " + mediaId));
         }

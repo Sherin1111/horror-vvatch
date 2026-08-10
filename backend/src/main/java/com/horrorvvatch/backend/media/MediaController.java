@@ -19,9 +19,9 @@ public class MediaController {
 
     private final MediaService mediaService;
 
-        public MediaController(MediaService mediaService) {
-            this.mediaService = mediaService;
-        }
+    public MediaController(MediaService mediaService) {
+        this.mediaService = mediaService;
+    }
 
     @GetMapping
     public List<Media> getAllMedia() {
@@ -29,7 +29,7 @@ public class MediaController {
     }
 
     @GetMapping("/{mediaId}")
-    public Media getMediaId(@PathVariable Long mediaId) {
+    public Media getMediaId(@PathVariable Integer mediaId) {
         try {
             return mediaService.getMediaId(mediaId);
         } catch (NoSuchElementException exception) {

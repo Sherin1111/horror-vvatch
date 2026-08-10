@@ -4,3 +4,7 @@
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/media/MediaRepository.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/media/MediaService.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/media/MediaType.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/User.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserController.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserRepository.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserService.java

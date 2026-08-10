@@ -17,11 +17,12 @@ import jakarta.persistence.GeneratedValue;
 @Table(name = "media")
 public class Media {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long mediaId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "media_id")
+    private Integer mediaId;
 
     @Column(name = "tmdb_id", nullable = false)
-    private Long tmdbId;
+    private Integer tmdbId;
 
     // Stores whether this media is a movie or TV show
     @Enumerated(EnumType.STRING)
@@ -50,7 +51,7 @@ public class Media {
     private Integer numberOfEpisodes;
 
     // Parameterised constructor
-    public Media(Long tmdbId, MediaType mediaType, String title, String summary, LocalDate releaseDate, String posterPath, Integer runtimeMinutes, Integer numberOfSeasons, Integer numberOfEpisodes) {
+    public Media(Integer tmdbId, MediaType mediaType, String title, String summary, LocalDate releaseDate, String posterPath, Integer runtimeMinutes, Integer numberOfSeasons, Integer numberOfEpisodes) {
         this.tmdbId = tmdbId;
         this.mediaType = mediaType;
         this.title = title;
@@ -66,12 +67,12 @@ public class Media {
     public Media() {
     }
 
-    // Getters
-    public Long getMediaId() {
+    // Getters to return media details
+    public Integer getMediaId() {
         return mediaId;
     }
 
-    public Long getTmdbId() {
+    public Integer getTmdbId() {
         return tmdbId;
     }
     
