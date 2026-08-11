@@ -1,12 +1,18 @@
 package com.horrorvvatch.backend.media;
 
 import java.time.LocalDate;
+import java.util.Set;
+
+import com.horrorvvatch.backend.horrorCategory.HorrorCategory;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
@@ -49,6 +55,14 @@ public class Media {
 
     @Column(name = "number_of_episodes")
     private Integer numberOfEpisodes;
+
+    //Relationships
+    @ManyToMany
+    @JoinTable(
+        name = "media_horror_category",
+        joinColumns = @JoinColumn(name = "media_id"),
+        inverseJoinColumns = @JoinColumn(name = "category_id"))
+    Set<HorrorCategory> horrorCategories;
 
     // Parameterised constructor
     public Media(Integer tmdbId, MediaType mediaType, String title, String summary, LocalDate releaseDate, String posterPath, Integer runtimeMinutes, Integer numberOfSeasons, Integer numberOfEpisodes) {
