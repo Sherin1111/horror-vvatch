@@ -67,6 +67,23 @@ public class UserController {
         } 
      
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            boolean passwordMatches = userService.checkPassword(
+            loginRequest.getEmail(), 
+            loginRequest.getPassword()
+        );
+        if (passwordMatches) {
+            return ResponseEntity.ok().build();
+        }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+    
     
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User user) {

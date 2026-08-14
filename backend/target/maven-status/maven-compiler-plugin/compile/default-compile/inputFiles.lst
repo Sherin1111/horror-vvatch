@@ -1,4 +1,5 @@
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/BackendApplication.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/config/PasswordConfig.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarning.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarningController.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarningRepository.java

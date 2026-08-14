@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Finds all users
@@ -37,12 +40,26 @@ public class UserService {
         .orElseThrow(() -> new NoSuchElementException("No user with email: " + email));
     }
 
-    //create user
+    // Password check method
+    public boolean checkPassword(String email, String password) {
+        User user = getUserByEmail(email);
+
+        return passwordEncoder.matches(
+            password, 
+            user.getPasswordHash()
+        );
+    }
+
+    //create user and hash password
     public User addUser(User newUser) {
         if (newUser.getPasswordHash() == null 
             || newUser.getPasswordHash().isBlank()) {
-        throw new IllegalArgumentException("Password is required");
+            throw new IllegalArgumentException("Password is required");
         } 
+
+        String encodedPassword = passwordEncoder.encode(newUser.getPasswordHash());
+        newUser.setPasswordHash(encodedPassword);
+
         return userRepository.save(newUser);
     }
 
