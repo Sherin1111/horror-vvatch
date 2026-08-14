@@ -42,7 +42,8 @@ Another goal is to have a fun status system:
 
 ## 3. MVP
 
-- User registration and profile
+- User registration and login
+- User profile management
 - Browse stored horror movies and TV shows
 - Personal watchlist
 - Three watch statuses
@@ -117,6 +118,7 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 
 - **Frontend:** React, TypeScript
 - **Backend:** Java, Spring Boot
+- **Security:** Spring Security PasswordEncoder
 - **Database:** MySQL
 - **Containerisation:** Docker, Docker Compose
 - **External API:** TMDB (planned)
@@ -157,17 +159,18 @@ Current folder structure, to be updated as the project develops:
 
 ```text
 horror-vvatch/
-├── backend/
-│   ├── src/
-│   │   └── main/
-│   │       └── java/
-│   │           └── com/
-│   │               └── horrorvvatch/
-│   │                   └── backend/
-│   │                       ├── contentWarning/
-│   │                       ├── horrorCategory/
-│   │                       ├── media/
-│   │                       └── user/
+backend/
+├── src/
+│   └── main/
+│       └── java/
+│           └── com/
+│               └── horrorvvatch/
+│                   └── backend/
+│                       ├── config/
+│                       ├── contentWarning/
+│                       ├── horrorCategory/
+│                       ├── media/
+│                       └── user/
 │   ├── pom.xml
 │   └── mvnw
 │
@@ -266,8 +269,6 @@ The initial seed data contains:
 - Media-to-category relationships
 - Media-to-content-warning relationships
 
-User seed data will be added after password encoding is implemented.
-
 ### Database Relationships
 
 The following entity relationship diagram (ERD) illustrates the relationships
@@ -287,15 +288,16 @@ planned as the next core backend features.
 
 ### Users
 
-| Method   | Endpoint                                | Description                       |
-| -------- | --------------------------------------- | --------------------------------- |
-| `POST`   | `/api/users`                            | Create/register a new user        |
-| `GET`    | `/api/users/{userId}`                   | Retrieve a user's profile         |
-| `PUT`    | `/api/users/{userId}`                   | Update an existing user's profile |
-| `GET`    | `/api/users`                            | Retrieve all users                |
-| `GET`    | `/api/users/search?username={username}` | Search users by username          |
-| `GET`    | `/api/users/by-email?email={email}`     | Retrieve a user by email          |
-| `DELETE` | `/api/users/{userId}`                   | Delete an existing user account   |
+| Method   | Endpoint                                | Description                        |
+| -------- | --------------------------------------- | ---------------------------------- |
+| `POST`   | `/api/users`                            | Create/register a new user         |
+| `POST`   | `/api/users/login`                      | Verify a user's email and password |
+| `GET`    | `/api/users/{userId}`                   | Retrieve a user's profile          |
+| `PUT`    | `/api/users/{userId}`                   | Update an existing user's profile  |
+| `GET`    | `/api/users`                            | Retrieve all users                 |
+| `GET`    | `/api/users/search?username={username}` | Search users by username           |
+| `GET`    | `/api/users/by-email?email={email}`     | Retrieve a user by email           |
+| `DELETE` | `/api/users/{userId}`                   | Delete an existing user account    |
 
 ### Media
 
@@ -347,84 +349,68 @@ planned as the next core backend features.
 
 ### User Feature
 
-The User feature has been implemented using the same feature-based package structure as the Media feature.
+The User feature manages user registration, profiles and login.
 
-The feature currently includes:
+It follows the feature-based backend structure and contains:
 
-- `User` entity
+- `User`
 - `UserRepository`
 - `UserService`
 - `UserController`
-- CRUD operations (Create, Read, Update and Delete)
-- Search users by username
-- Retrieve a user by email
-- Password validation before creating a user
-- Password hidden from API responses using `@JsonProperty(access = WRITE_ONLY)`
+- `LoginRequest`
 
-The User API currently supports:
+User data can be created, retrieved, searched, updated and deleted through
+the REST API. Usernames and email addresses are unique, and passwords are
+required when registering an account.
 
-- Creating a new user
-- Retrieving all users
-- Retrieving one user by ID
-- Searching users by username
-- Retrieving a user by email
-- Updating a user's details
-- Deleting a user
+The password field is configured as write-only using
+`@JsonProperty(access = WRITE_ONLY)`, allowing passwords to be received in
+requests without exposing them in API responses.
 
-The request flow is:
+#### Password Encoding and Login
 
-```text
-Client (Postman / React)
-        ↓
-HTTP Request
-        ↓
-UserController
-        ↓
-UserService
-        ↓
-UserRepository
-        ↓
-MySQL Database
-        ↓
-JSON Response
-```
+Spring Security's `PasswordEncoder` is used to encode passwords before they
+are stored in MySQL.
+
+The application configures the default delegating password encoder using:
+
+`PasswordEncoderFactories.createDelegatingPasswordEncoder()`
+
+When a user registers:
+
+1. The API receives the user's plain-text password.
+2. `UserService` passes the password to `PasswordEncoder`.
+3. The encoded password is stored in the database.
+4. The password is excluded from the JSON response.
+
+When a user logs in through `POST /api/users/login`, the submitted password
+is compared with the stored encoded password using
+`PasswordEncoder.matches()`.
+
+Valid credentials return `200 OK`. An incorrect password or unknown email
+returns `401 Unauthorized`.
+
+The current implementation verifies credentials but does not yet provide
+JWT or session-based authentication.
 
 ### Media Feature
 
-The Media feature has been implemented using a feature-based Spring Boot package structure.
+The Media feature represents horror movies and TV shows stored by the
+application.
 
-The feature currently includes:
+It contains:
 
-- `Media` entity
-- `MediaType` enum
+- `Media`
+- `MediaType`
 - `MediaRepository`
 - `MediaService`
 - `MediaController`
-- Initial media seed data
 
-The Media API currently supports:
+The `MediaType` enum distinguishes between `MOVIE` and `TV_SHOW`. Movies can
+store a runtime, while TV shows can store their number of seasons and episodes.
 
-- Retrieving all media
-- Retrieving one media title by ID
-- Searching media by title using a case-insensitive partial match
-
-The request flow is:
-
-```text
-Client (Postman / React)
-        ↓
-HTTP Request
-        ↓
-MediaController
-        ↓
-MediaService
-        ↓
-MediaRepository
-        ↓
-MySQL Database
-        ↓
-JSON Response
-```
+The API supports retrieving stored media and performing case-insensitive
+partial title searches.
 
 ### Horror Categories Feature
 
@@ -485,174 +471,102 @@ relationship queries, filtering behaviour, validation, and error responses.
 
 ### User API
 
-| Method   | Endpoint                                   | Expected result          | Result |
-| -------- | ------------------------------------------ | ------------------------ | ------ |
-| `POST`   | `/api/users`                               | Create a new user        | Pass   |
-| `GET`    | `/api/users`                               | Retrieve all users       | Pass   |
-| `GET`    | `/api/users/{userId}`                      | Retrieve a single user   | Pass   |
-| `GET`    | `/api/users/search?username=mo`            | Search users by username | Pass   |
-| `GET`    | `/api/users/by-email?email=onyx@email.com` | Retrieve a user by email | Pass   |
-| `PUT`    | `/api/users/{userId}`                      | Update user details      | Pass   |
-| `DELETE` | `/api/users/{userId}`                      | Delete a user            | Pass   |
-| `GET`    | `/api/users/999`                           | Return `404 Not Found`   | Pass   |
-| `POST`   | `/api/users` (without password)            | Return 400 Bad Request   | Pass   |
+| Test                          | Expected result         | Result |
+| ----------------------------- | ----------------------- | ------ |
+| Register valid user           | `201 Created`           | Pass   |
+| Retrieve users                | `200 OK`                | Pass   |
+| Retrieve user by ID           | `200 OK`                | Pass   |
+| Search by username            | Matching users returned | Pass   |
+| Retrieve by email             | Matching user returned  | Pass   |
+| Update user                   | `200 OK`                | Pass   |
+| Delete user                   | `204 No Content`        | Pass   |
+| Retrieve unknown user         | `404 Not Found`         | Pass   |
+| Register without password     | `400 Bad Request`       | Pass   |
+| Login with valid credentials  | `200 OK`                | Pass   |
+| Login with incorrect password | `401 Unauthorized`      | Pass   |
+| Login with unknown email      | `401 Unauthorized`      | Pass   |
 
-### Create User
+#### User Registration and Password Encoding
 
-![Postman response showing a successful user creation (201 Created)](images/post-user.png)
-_Creating a new user returns `201 Created`. The password is accepted in the request but is excluded from the JSON response because the field is configured as write-only._
+![Successful user registration](images/new-user-with-password.png)
 
-### Retrieve All Users
+_A new user is successfully registered and returns `201 Created`. The
+plain-text password is not included in the API response._
 
-![Postman response showing all users stored in the database](images/get-all-users.png)
-_Retrieving all users stored in the database returns `200 OK`._
+![Encoded password stored in MySQL](images/new-user-hashed-password.png)
 
-### Retrieve User by ID
+_The password submitted during registration is encoded before being stored
+in MySQL._
 
-![Postman response showing a single user retrieved by ID](images/get-one-user.png)
-_Retrieving an existing user by their ID returns `200 OK` with the user's details._
+#### Login
 
-### Search Users by Username
+![Successful login](images/correct-login.png)
 
-![Postman response showing users returned using a case-insensitive partial username search](images/get-by-username.png)
-_Searching with the partial username "mo" returns matching users using a case-insensitive search._
-
-### Retrieve User by Email
-
-![Postman response showing a user retrieved using their email address](images/get-by-email.png)
-_Retrieving a user by their email address returns `200 OK` with the matching user's details._
-
-### Update User
-
-![Postman response showing a user's details being updated successfully](images/put-user-name.png)
-_Updating a user's first name returns `200 OK`. Fields not included in the request remain unchanged._
-
-### Delete User
-
-![Postman response showing a successful deletion (204 No Content)](images/delete-user.png)
-_Successfully deleting an existing user returns `204 No Content`._
-
-### User Not Found
-
-![Requesting a user that does not exist returns 404 Not Found](images/get-user-error.png)
-_Requesting a user with an ID that does not exist returns `404 Not Found`._
-
-### Validation Error
-
-![Creating a user without providing a password returns 400 Bad Request](images/post-user-missing-password.png)
-_Attempting to create a user without a password returns `400 Bad Request` because a password is required._
+_Valid credentials return `200 OK`. Incorrect passwords and unknown email
+addresses were also tested and correctly returned `401 Unauthorized`._
 
 ### Media API
 
-| Method | Endpoint                        | Expected result                  | Result |
-| ------ | ------------------------------- | -------------------------------- | ------ |
-| `GET`  | `/api/media`                    | Return all stored media          | Pass   |
-| `GET`  | `/api/media/1`                  | Return one media title           | Pass   |
-| `GET`  | `/api/media/search?title=witch` | Return titles containing "witch" | Pass   |
-| `GET`  | `/api/media/search?title=super` | Return titles containing "super" | Pass   |
-| `GET`  | `/api/media/999`                | Return `404 Not Found`           | Pass   |
+| Test                     | Expected result         | Result |
+| ------------------------ | ----------------------- | ------ |
+| Retrieve all media       | `200 OK`                | Pass   |
+| Retrieve media by ID     | `200 OK`                | Pass   |
+| Search title for "witch" | Matching media returned | Pass   |
+| Search title for "super" | Matching media returned | Pass   |
+| Retrieve unknown media   | `404 Not Found`         | Pass   |
 
-### Retrieve All Media
-
-![Postman response showing all media](images/api-all-media.png)
-_Retrieving all media stored in the database returns `200 OK`._
-
-### Retrieve Media by ID
+#### Retrieve Media by ID
 
 ![Postman response showing one media title](images/api-one-media-title.png)
 _Retrieving an existing media title by its ID returns `200 OK` with the media details._
 
-### Search by Title ("witch")
-
-![Postman response showing titles containing "witch"](images/api-title-search2.png)
-_Searching for "witch" returns media titles containing the search term using a case-insensitive partial match._
-
-### Search by Title ("super")
+#### Search by Title ("super")
 
 ![Postman response showing titles containing "super"](images/api-title-search.png)
 _Searching for "super" demonstrates that partial title searches return matching media records._
 
-### Media Not Found
+#### Media Not Found
 
 ![Postman response showing `404 Not Found`](images/api-404-not-found.png)
 _Requesting a media title with an ID that does not exist returns `404 Not Found`._
 
-### Horror Category Endpoints
+### Horror Category API
 
-| Method | Endpoint                                     | Description                              |
-| ------ | -------------------------------------------- | ---------------------------------------- |
-| GET    | `/api/categories`                            | Get all horror categories                |
-| GET    | `/api/categories/{categoryId}`               | Get a horror category by ID              |
-| GET    | `/api/categories/search?categoryName={name}` | Search horror categories by name         |
-| GET    | `/api/categories/{categoryId}/media`         | Get media belonging to a horror category |
-| GET    | `/api/categories/999`                        | Return `404 Not Found`                   |
-| GET    | `/api/categories/999/media`                  | Return `404 Not Found`                   |
+| Test                                | Expected result              | Result |
+| ----------------------------------- | ---------------------------- | ------ |
+| Retrieve all horror categories      | `200 OK`                     | Pass   |
+| Retrieve horror category by ID      | `200 OK`                     | Pass   |
+| Search horror category by name      | Matching categories returned | Pass   |
+| Retrieve media by category          | Matching media returned      | Pass   |
+| Retrieve unknown category           | `404 Not Found`              | Pass   |
+| Retrieve media for unknown category | `404 Not Found`              | Pass   |
 
-### Retrieve all horror categories
-
-![Postman response showing all horror categories](images/get-all-categories.png)
-
-### Retrieve horror category by ID
-
-![Postman response showing one horror category](images/get-category-by-id.png)
-
-### Retrieve horror category by name
-
-![Postman response showing horror category by name](images/get-category-by-name.png)
-
-### Retrieve media belonging to a horror category
+#### Filter media by category
 
 ![Postman response showing media belonging to a horror category](images/filter-media-by-category.png)
 
-### Horror category not found
+#### Horror category not found
 
 ![Postman response showing horror category not found](images/category-error.png)
 
-### Media belonging to a horror category not found
+### Content Warning API
 
-![Postman response showing 404 when filtering media with a non-existent horror category](images/category-error-2.png)
+| Test                                | Expected result            | Result |
+| ----------------------------------- | -------------------------- | ------ |
+| Retrieve all content warnings       | `200 OK`                   | Pass   |
+| Retrieve content warning by ID      | `200 OK`                   | Pass   |
+| Search content warning by name      | Matching warnings returned | Pass   |
+| Exclude media by content warning    | Filtered media returned    | Pass   |
+| Retrieve unknown content warning    | `404 Not Found`            | Pass   |
+| Exclude media using unknown warning | `404 Not Found`            | Pass   |
 
-### Content Warning Endpoints
-
-| Method | Endpoint                                          | Description                                           |
-| ------ | ------------------------------------------------- | ----------------------------------------------------- |
-| GET    | `/api/content-warnings`                           | Get all content warnings                              |
-| GET    | `/api/content-warnings/{warningId}`               | Get a content warning by ID                           |
-| GET    | `/api/content-warnings/search?warningName={name}` | Search content warnings by name                       |
-| GET    | `/api/content-warnings/{warningId}/exclude-media` | Get media that does not contain the specified warning |
-| GET    | `/api/content-warnings/999`                       | Return `404 Not Found`                                |
-| GET    | `/api/content-warnings/999/exclude-media`         | Return `404 Not Found`                                |
-
-### Retrieve all content warnings
-
-![Postman response showing all content warnings](images/get-all-conent-warning.png)
-
-### Retrieve content warning by ID
-
-![Postman response showing one content warning](images/get-animal-death-warning.png)
-
-### Retrieve content warning by name
-
-![Postman response showing content warning by name](images/get-warning-by-name.png)
-
-### Exclude Media with Animal Death Warning
-
-![Postman response showing media not belonging to a content warning](images/exclude-media-with-animal-death.png)
-
-### Exclude Media with Blood Warning
+#### Exclude Media with Blood Warning
 
 ![Postman response showing media not belonging to a content warning](images/exclude-media-with-blood.png)
 
-### Content Warning Not Found
+#### Content Warning Not Found
 
 ![Postman response showing content warning not found](images/content-warning-error.png)
-
-### Exclude Media with Non-existent Content Warning
-
-![Postman response showing a 404 response when excluding a non-existent content warning](images/exclude-content-warning-error.png)
-
-_Requesting excluded media using a content warning ID that does not exist
-returns `404 Not Found`._
 
 ## 14. Challenges and Solutions
 
@@ -668,6 +582,21 @@ Spring Boot.
 
 The issue was resolved by renaming the file, recompiling the project, and
 verifying that the `MediaController.class` file had been generated successfully.
+
+### Spring Security Returning 401
+
+After adding the Spring Security dependency to implement password encoding,
+existing API requests began returning `401 Unauthorized`.
+
+This happened because Spring Security secures application endpoints by
+default when the dependency is added.
+
+A `SecurityFilterChain` was configured to permit the application's current
+API requests while password encoding and login functionality are developed.
+CSRF protection was also disabled for the current REST API development setup.
+
+This allowed the existing endpoints to continue working while still using
+Spring Security's `PasswordEncoder` for secure password storage.
 
 ---
 
