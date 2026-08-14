@@ -54,8 +54,6 @@ Another goal is to have a fun status system:
 
 ## 4. Stretch Goals
 
-- Horror category filtering
-- Content warnings
 - TMDB search
 - Movie vs TV show filtering
 - Multiple themes
@@ -99,13 +97,13 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 - As a user, I want to read other users' reviews so I can decide whether a
   movie or TV show is worth watching.
 
-### Future User Stories
-
 - As a user, I want to filter media by horror category so I can quickly find
   the types of horror I enjoy.
 
 - As a user, I want to filter out movies with certain content warnings so I
   can avoid themes I don't like.
+
+### Future User Stories
 
 - As a user, I want personalised horror recommendations so I can discover
   new titles based on my watch history.
@@ -129,7 +127,27 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 
 ## 7. Architecture
 
-_To be added as the application architecture is implemented._
+Horror VVatch uses a full-stack client-server architecture.
+
+The React and TypeScript frontend will communicate with a REST API built
+using Java and Spring Boot. The backend uses Spring Data JPA to communicate
+with a MySQL relational database.
+
+The Spring Boot backend follows a feature-based package structure. Related
+classes are grouped by application feature rather than by technical layer.
+
+For example:
+
+- `media`
+- `user`
+- `horrorCategory`
+- `contentWarning`
+
+Each feature contains the entity, repository, service, and controller classes
+required by that feature.
+
+This structure keeps related functionality together and helps reduce coupling
+between different areas of the application.
 
 ---
 
@@ -146,6 +164,8 @@ horror-vvatch/
 │   │           └── com/
 │   │               └── horrorvvatch/
 │   │                   └── backend/
+│   │                       ├── contentWarning/
+│   │                       ├── horrorCategory/
 │   │                       ├── media/
 │   │                       └── user/
 │   ├── pom.xml
@@ -167,7 +187,35 @@ horror-vvatch/
 
 ## 9. Data Flow
 
-_To be added as the frontend and backend are implemented._
+The backend follows a feature-based architecture. Each feature contains its
+own entity, repository, service, and controller where required.
+
+A typical API request follows this flow:
+
+```text
+Client (Postman / React)
+        ↓
+HTTP Request
+        ↓
+Controller
+        ↓
+Service
+        ↓
+Repository
+        ↓
+MySQL Database
+        ↓
+JSON Response
+```
+
+The controller handles incoming HTTP requests and responses. Business logic
+is handled by the service layer, while repositories communicate with the
+MySQL database using Spring Data JPA.
+
+Relationships between entities allow related data to be retrieved. For
+example, a horror category can return the media associated with that category,
+while the content warning service can return media excluding titles associated
+with a specified warning.
 
 ---
 
@@ -190,8 +238,9 @@ The `media_horror_category` and `media_content_warning` junction tables create
 many-to-many relationships between media titles and their associated horror
 categories and content warnings.
 
-This will eventually allow users to filter media by horror subcategories, such
-as supernatural or slasher, and view or filter titles based on content warnings.
+These relationships allow media to be filtered by horror subcategories, such
+as supernatural or slasher, and allow titles to be filtered based on content
+warnings.
 
 ### Database Implementation
 
@@ -201,17 +250,23 @@ a check constraint limiting scare ratings to values from 1 to 5.
 
 Hibernate automatically maps the Java entities to the MySQL database tables through Spring Data JPA.
 
-The schema was verified by successfully creating the tables in MySQL and populating the media table using the initial seed data.
+The schema was verified by successfully creating the tables in MySQL and
+populating the database using the initial seed data. The seed data includes
+movies, TV shows, horror categories, content warnings, and the junction-table
+relationships connecting categories and warnings to media.
 
-### Initial Media Seed Data
+### Initial Seed Data
 
-The `media` table currently contains ten sample records:
+The initial seed data contains:
 
-- Five movies
-- Five TV shows
+- 5 movies
+- 5 TV shows
+- 26 horror categories
+- 30 content warnings
+- Media-to-category relationships
+- Media-to-content-warning relationships
 
-The sample data is used to test the Media repository, service, controller, and
-API endpoints before TMDB integration is added.
+User seed data will be added after password encoding is implemented.
 
 ### Database Relationships
 
@@ -224,24 +279,23 @@ between the database tables used in Horror VVatch.
 
 ## 11. API Design
 
-The following API endpoints form the core MVP.
+The following endpoints define the current and planned REST API for Horror VVatch.
 
-The Media endpoints have been implemented and tested.
-The remaining endpoints are planned for implementation.
+The User, Media, Horror Category, and Content Warning endpoints have been
+implemented and tested using Postman. Watchlist and Review endpoints are
+planned as the next core backend features.
 
 ### Users
 
-| Method | Endpoint              | Description                       |
-| ------ | --------------------- | --------------------------------- |
-| `POST` | `/api/users`          | Create/register a new user        |
-| `GET`  | `/api/users/{userId}` | Retrieve a user's profile         |
-| `PUT`  | `/api/users/{userId}` | Update an existing user's profile |
-
-The following endpoint may be added later:
-
-| Method   | Endpoint              | Description                     |
-| -------- | --------------------- | ------------------------------- |
-| `DELETE` | `/api/users/{userId}` | Delete an existing user account |
+| Method   | Endpoint                                | Description                       |
+| -------- | --------------------------------------- | --------------------------------- |
+| `POST`   | `/api/users`                            | Create/register a new user        |
+| `GET`    | `/api/users/{userId}`                   | Retrieve a user's profile         |
+| `PUT`    | `/api/users/{userId}`                   | Update an existing user's profile |
+| `GET`    | `/api/users`                            | Retrieve all users                |
+| `GET`    | `/api/users/search?username={username}` | Search users by username          |
+| `GET`    | `/api/users/by-email?email={email}`     | Retrieve a user by email          |
+| `DELETE` | `/api/users/{userId}`                   | Delete an existing user account   |
 
 ### Media
 
@@ -269,26 +323,23 @@ The following endpoint may be added later:
 | `PUT`    | `/api/reviews/{reviewId}`      | Edit an existing review                                      |
 | `DELETE` | `/api/reviews/{reviewId}`      | Delete an existing review                                    |
 
-### Planned API Endpoints
-
-The following endpoints are planned as stretch features and will be implemented
-after the core MVP endpoints are complete.
-
 #### Horror Categories
 
-| Method | Endpoint                           | Description                                |
-| ------ | ---------------------------------- | ------------------------------------------ |
-| `GET`  | `/api/categories`                  | Retrieve all horror categories             |
-| `GET`  | `/api/categories/{categoryId}`     | Retrieve one horror category by ID         |
-| `GET`  | `/api/media?category=SUPERNATURAL` | Retrieve media filtered by horror category |
+| Method | Endpoint                                     | Description                                   |
+| ------ | -------------------------------------------- | --------------------------------------------- |
+| `GET`  | `/api/categories`                            | Retrieve all horror categories                |
+| `GET`  | `/api/categories/{categoryId}`               | Retrieve a horror category by ID              |
+| `GET`  | `/api/categories/search?categoryName={name}` | Search horror categories by name              |
+| `GET`  | `/api/categories/{categoryId}/media`         | Retrieve media belonging to a horror category |
 
 #### Content Warnings
 
-| Method | Endpoint                                | Description                                              |
-| ------ | --------------------------------------- | -------------------------------------------------------- |
-| `GET`  | `/api/content-warnings`                 | Retrieve all available content warnings                  |
-| `GET`  | `/api/media/{mediaId}/content-warnings` | Retrieve the content warnings for a specific media title |
-| `GET`  | `/api/media?excludeWarning=TORTURE`     | Retrieve media excluding a specific content warning      |
+| Method | Endpoint                                          | Description                                                        |
+| ------ | ------------------------------------------------- | ------------------------------------------------------------------ |
+| `GET`  | `/api/content-warnings`                           | Retrieve all content warnings                                      |
+| `GET`  | `/api/content-warnings/{warningId}`               | Retrieve a content warning by ID                                   |
+| `GET`  | `/api/content-warnings/search?warningName={name}` | Search content warnings by name                                    |
+| `GET`  | `/api/content-warnings/{warningId}/exclude-media` | Retrieve media that does not contain the specified content warning |
 
 ---
 
@@ -375,11 +426,62 @@ MySQL Database
 JSON Response
 ```
 
+### Horror Categories Feature
+
+Horror VVatch supports multiple horror categories for each movie or TV show.
+Media and horror categories have a many-to-many relationship, allowing a title
+to belong to multiple categories.
+
+Examples include:
+
+- Supernatural
+- Psychological Horror
+- Folk Horror
+- Vampire
+- Witches
+- Liminal Horror
+- Final Girl
+- Good for Her
+
+Horror category endpoints allow the API to:
+
+- Retrieve all horror categories
+- Retrieve a horror category by ID
+- Search for categories by name
+- Retrieve media belonging to a specific horror category
+
+### Content Warnings Feature
+
+Horror VVatch uses content warnings to help users identify potentially
+sensitive content in movies and TV shows.
+
+Media and content warnings have a many-to-many relationship, allowing each
+title to have multiple warnings and each warning to apply to multiple titles.
+
+Examples include:
+
+- Violence
+- Graphic Violence
+- Blood
+- Animal Harm
+- Animal Death
+- Child Harm
+- Psychological Distress
+- PTSD / Trauma
+- Claustrophobia
+- Flashing Lights
+
+The API also supports excluding media containing a particular content warning.
+This can be used by the frontend to allow users to filter out content they
+would prefer to avoid.
+
 ---
 
 ## 13. API Testing
 
-The User and Media APIs were tested using Postman.
+The User, Media, Horror Category, and Content Warning APIs were tested using
+Postman. Testing included successful requests, search functionality,
+relationship queries, filtering behaviour, validation, and error responses.
 
 ### User API
 
@@ -475,7 +577,82 @@ _Searching for "super" demonstrates that partial title searches return matching 
 ![Postman response showing `404 Not Found`](images/api-404-not-found.png)
 _Requesting a media title with an ID that does not exist returns `404 Not Found`._
 
----
+### Horror Category Endpoints
+
+| Method | Endpoint                                     | Description                              |
+| ------ | -------------------------------------------- | ---------------------------------------- |
+| GET    | `/api/categories`                            | Get all horror categories                |
+| GET    | `/api/categories/{categoryId}`               | Get a horror category by ID              |
+| GET    | `/api/categories/search?categoryName={name}` | Search horror categories by name         |
+| GET    | `/api/categories/{categoryId}/media`         | Get media belonging to a horror category |
+| GET    | `/api/categories/999`                        | Return `404 Not Found`                   |
+| GET    | `/api/categories/999/media`                  | Return `404 Not Found`                   |
+
+### Retrieve all horror categories
+
+![Postman response showing all horror categories](images/get-all-categories.png)
+
+### Retrieve horror category by ID
+
+![Postman response showing one horror category](images/get-category-by-id.png)
+
+### Retrieve horror category by name
+
+![Postman response showing horror category by name](images/get-category-by-name.png)
+
+### Retrieve media belonging to a horror category
+
+![Postman response showing media belonging to a horror category](images/filter-media-by-category.png)
+
+### Horror category not found
+
+![Postman response showing horror category not found](images/category-error.png)
+
+### Media belonging to a horror category not found
+
+![Postman response showing 404 when filtering media with a non-existent horror category](images/category-error-2.png)
+
+### Content Warning Endpoints
+
+| Method | Endpoint                                          | Description                                           |
+| ------ | ------------------------------------------------- | ----------------------------------------------------- |
+| GET    | `/api/content-warnings`                           | Get all content warnings                              |
+| GET    | `/api/content-warnings/{warningId}`               | Get a content warning by ID                           |
+| GET    | `/api/content-warnings/search?warningName={name}` | Search content warnings by name                       |
+| GET    | `/api/content-warnings/{warningId}/exclude-media` | Get media that does not contain the specified warning |
+| GET    | `/api/content-warnings/999`                       | Return `404 Not Found`                                |
+| GET    | `/api/content-warnings/999/exclude-media`         | Return `404 Not Found`                                |
+
+### Retrieve all content warnings
+
+![Postman response showing all content warnings](images/get-all-conent-warning.png)
+
+### Retrieve content warning by ID
+
+![Postman response showing one content warning](images/get-animal-death-warning.png)
+
+### Retrieve content warning by name
+
+![Postman response showing content warning by name](images/get-warning-by-name.png)
+
+### Exclude Media with Animal Death Warning
+
+![Postman response showing media not belonging to a content warning](images/exclude-media-with-animal-death.png)
+
+### Exclude Media with Blood Warning
+
+![Postman response showing media not belonging to a content warning](images/exclude-media-with-blood.png)
+
+### Content Warning Not Found
+
+![Postman response showing content warning not found](images/content-warning-error.png)
+
+### Exclude Media with Non-existent Content Warning
+
+![Postman response showing a 404 response when excluding a non-existent content warning](images/exclude-content-warning-error.png)
+
+_Requesting excluded media using a content warning ID that does not exist
+returns `404 Not Found`._
 
 ## 14. Challenges and Solutions
 
@@ -500,8 +677,8 @@ The following features are planned after the MVP is complete:
 
 - Integrate the TMDB API to automatically retrieve movie and TV show data.
 - Display official poster images rather than placeholder values.
-- Add horror category filtering.
-- Add content warning filtering.
+- Add frontend controls for filtering media by horror category.
+- Add frontend controls for excluding media by content warning.
 - Add personalised horror recommendations.
 - Add a discussion/community board for each media title.
 - Display upcoming horror movie and TV releases.
