@@ -1,4 +1,8 @@
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/BackendApplication.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarning.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarningController.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarningRepository.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/contentWarning/ContentWarningService.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/horrorCategory/HorrorCategory.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/horrorCategory/HorrorCategoryController.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/horrorCategory/HorrorCategoryRepository.java

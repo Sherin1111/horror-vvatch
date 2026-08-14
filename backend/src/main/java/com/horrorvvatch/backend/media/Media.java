@@ -3,6 +3,7 @@ package com.horrorvvatch.backend.media;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.horrorvvatch.backend.contentWarning.ContentWarning;
 import com.horrorvvatch.backend.horrorCategory.HorrorCategory;
 
 import jakarta.persistence.Column;
@@ -56,13 +57,21 @@ public class Media {
     @Column(name = "number_of_episodes")
     private Integer numberOfEpisodes;
 
-    //Relationships
+    //Relationship to Horror Category
     @ManyToMany
     @JoinTable(
         name = "media_horror_category",
         joinColumns = @JoinColumn(name = "media_id"),
         inverseJoinColumns = @JoinColumn(name = "category_id"))
     Set<HorrorCategory> horrorCategories;
+
+    //Relashionship to Content Warning
+    @ManyToMany
+    @JoinTable(
+        name ="media_content_warning",
+        joinColumns = @JoinColumn(name = "media_id"),
+        inverseJoinColumns = @JoinColumn(name = "warning_id"))
+    Set<ContentWarning> contentWarnings;
 
     // Parameterised constructor
     public Media(Integer tmdbId, MediaType mediaType, String title, String summary, LocalDate releaseDate, String posterPath, Integer runtimeMinutes, Integer numberOfSeasons, Integer numberOfEpisodes) {

@@ -46,7 +46,7 @@ public class HorrorCategory {
         return categoryName;
     }
 
-    //Getter to filter media using horror category
+    //Getter return media titles from Media
     public Set<Media> getMediaTitles() {
         return mediaTitles;
     }

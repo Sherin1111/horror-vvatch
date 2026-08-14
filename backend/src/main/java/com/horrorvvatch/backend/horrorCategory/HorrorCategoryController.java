@@ -41,8 +41,8 @@ public class HorrorCategoryController {
     }
 
     @GetMapping("/search")
-    public List<HorrorCategory> getHorrorByCategoryName(@RequestParam String categoryName) {
-        return horrorCategoryService.getHorrorByCategoryName(categoryName);
+    public List<HorrorCategory> getHorrorCategoryByName(@RequestParam String categoryName) {
+        return horrorCategoryService.getHorrorCategoryByName(categoryName);
     }
 
     @GetMapping("/{categoryId}/media")

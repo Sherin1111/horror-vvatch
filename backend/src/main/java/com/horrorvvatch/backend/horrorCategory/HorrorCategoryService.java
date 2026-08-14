@@ -28,8 +28,8 @@ public class HorrorCategoryService {
         .orElseThrow(() -> new NoSuchElementException("No horror category with id: " + categoryId));    
     }
     
-    //Get Horror category by category name
-    public List<HorrorCategory> getHorrorByCategoryName(String categoryName) {
+    //Get horror category by category name
+    public List<HorrorCategory> getHorrorCategoryByName(String categoryName) {
         return horrorCategoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
     }
 
