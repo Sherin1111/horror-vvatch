@@ -1,4 +1,5 @@
 com/horrorvvatch/backend/media/MediaRepository.class
+com/horrorvvatch/backend/user/LoginRequest.class
 com/horrorvvatch/backend/horrorCategory/HorrorCategoryRepository.class
 com/horrorvvatch/backend/horrorCategory/HorrorCategoryController.class
 com/horrorvvatch/backend/media/MediaType.class
