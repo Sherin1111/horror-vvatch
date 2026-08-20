@@ -60,10 +60,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
         try {
-            User addUser = userService.addUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(addUser);
+            User addedUser = userService.addUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not created", e); 
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e); 
         } 
      
     }

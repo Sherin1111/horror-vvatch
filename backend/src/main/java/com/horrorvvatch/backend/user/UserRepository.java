@@ -14,4 +14,6 @@ public interface UserRepository extends ListCrudRepository<User, Integer> {
 
     // Finds user by email
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsername(String username);
 }

@@ -52,6 +52,15 @@ public class UserService {
 
     //create user and hash password
     public User addUser(User newUser) {
+        if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        if (userRepository.findByUsername(newUser.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+
         if (newUser.getPasswordHash() == null 
             || newUser.getPasswordHash().isBlank()) {
             throw new IllegalArgumentException("Password is required");
