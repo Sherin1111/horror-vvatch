@@ -18,3 +18,8 @@
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserController.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserRepository.java
 /Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/user/UserService.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/watchlistEntry/WatchStatus.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/watchlistEntry/WatchlistEntry.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/watchlistEntry/WatchlistEntryController.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/watchlistEntry/WatchlistEntryRepository.java
+/Users/sherin/Desktop/full-stack-project/horror-vvatch/backend/src/main/java/com/horrorvvatch/backend/watchlistEntry/WatchlistEntryService.java

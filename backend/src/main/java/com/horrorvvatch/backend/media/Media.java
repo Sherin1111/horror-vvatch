@@ -90,7 +90,7 @@ public class Media {
     public Media() {
     }
 
-    // Getters to return media details
+    // Getters 
     public Integer getMediaId() {
         return mediaId;
     }

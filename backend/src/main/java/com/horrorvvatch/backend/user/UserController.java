@@ -84,7 +84,6 @@ public class UserController {
         }
     }
     
-    
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User user) {
         try {
