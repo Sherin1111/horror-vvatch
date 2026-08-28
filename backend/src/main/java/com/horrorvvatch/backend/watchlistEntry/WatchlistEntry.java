@@ -40,6 +40,7 @@ public class WatchlistEntry {
     @Column(name = "watch_status", nullable = false)
     private WatchStatus watchStatus;
 
+    // Scare rating between 1-5
     @Column(name = "scare_rating", columnDefinition = "TINYINT")
     private Integer scareRating;
 
