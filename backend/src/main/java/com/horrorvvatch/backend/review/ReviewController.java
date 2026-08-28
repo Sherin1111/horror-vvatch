@@ -34,7 +34,7 @@ public class ReviewController {
         this.userService = userService;
     }
 
-    // Get review by id
+    // Gets review by ID
     @GetMapping("/{reviewId}")
     public Review getReviewById(@PathVariable Integer reviewId) {
         try {
@@ -44,7 +44,7 @@ public class ReviewController {
         }
     }
 
-    // Get all reviews 
+    // Gets all reviews for a specific media
     @GetMapping("/media/{mediaId}")
     public List<Review> getAllReviews(@PathVariable Integer mediaId) {
         Media media = mediaService.getMediaId(mediaId);
@@ -52,7 +52,7 @@ public class ReviewController {
 
     }
 
-    // Add a review for a specific media
+    // Adds a review for a specific media
     @PostMapping("/users/{userId}/media/{mediaId}")
     public ResponseEntity<Review> addReviewToMedia(@PathVariable Integer userId, @PathVariable Integer mediaId, @RequestBody String reviewText) {
         try {
@@ -67,7 +67,7 @@ public class ReviewController {
         }
     }
 
-    // update review
+    // Updates existing review
     @PutMapping("/{reviewId}")
     public ResponseEntity<Review> updateReview(@PathVariable Integer reviewId, @RequestBody String updatedReviewText) {
         try {
@@ -79,7 +79,7 @@ public class ReviewController {
         }
     }
 
-    // Delete a review
+    // Deletes a review
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Integer reviewId) {
         try {

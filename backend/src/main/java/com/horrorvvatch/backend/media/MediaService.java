@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 
-//Service contains the business logic, the contoller asks it to do things and the service uses the repository to talk to the databse 
 @Service
 public class MediaService {
     
@@ -15,18 +14,18 @@ public class MediaService {
         this.mediaRepository = mediaRepository;
     }
 
-    // Get all media from the database
+    // Gets all media (movies and TV shows)
     public List<Media> getAllMedia() {
         return mediaRepository.findAll();
     }
 
-    //Get media by id 
+    //Gets media by ID 
     public Media getMediaId(Integer mediaId) {
         return mediaRepository.findById(mediaId)
         .orElseThrow(() -> new NoSuchElementException("No Media with id: " + mediaId));
     }
 
-    //Get Media by title
+    //Gets media by title
     public List<Media> getMediaTitle(String title) {
         return mediaRepository.findByTitleContainingIgnoreCase(title);
     }

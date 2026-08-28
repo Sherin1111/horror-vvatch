@@ -18,23 +18,23 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Finds all users
+    // Gets all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Find users by id
+    // Gets user by id
     public User getUserById(Integer userId) {
         return userRepository.findById(userId)
         .orElseThrow(() -> new NoSuchElementException("No user with id: " + userId));
     }
 
-    // Find users by username
+    // Gets user by username
     public List<User> searchUserByUsername(String username) {
         return userRepository.findByUsernameContainingIgnoreCase(username);
     }
 
-    // Find user by email
+    // Gets user by email
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
         .orElseThrow(() -> new NoSuchElementException("No user with email: " + email));
@@ -50,7 +50,7 @@ public class UserService {
         );
     }
 
-    //create user and hash password
+    // Creates new user and hashed password
     public User addUser(User newUser) {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
@@ -72,7 +72,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    //update user
+    // Updates user
     public User updateUser(Integer userId, User updatedUser) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
@@ -96,7 +96,7 @@ public class UserService {
         }
     }
 
-    //Delete user by id
+    //Deletes user by id
     public void deleteUser(Integer userId) {
         getUserById(userId);
         userRepository.deleteById(userId);

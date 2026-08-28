@@ -38,7 +38,7 @@ public class WatchlistEntryController {
     }
     
 
-    //Get watchlist entry by id
+    // Gets watchlist entry by ID
     @GetMapping("/{watchlistEntryId}")
     public WatchlistEntry getWatchlistEntryById(@PathVariable Integer watchlistEntryId) {
         try {
@@ -48,14 +48,14 @@ public class WatchlistEntryController {
         }
     }
 
-    //get all watchlist entries
+    // Gets all media in a user's watchlist
     @GetMapping("/users/{userId}")
     public List<WatchlistEntry> getWatchlistEntries(@PathVariable Integer userId) { 
         User user = userService.getUserById(userId);
         return watchlistEntryService.getWatchlistEntries(user);
     }
 
-    //Add media to watchlist 
+    // Adds media to the user's watchlist 
     @PostMapping("/users/{userId}/media/{mediaId}")
     public ResponseEntity<WatchlistEntry> addMediaToWatchlistEntry(@PathVariable Integer userId, @PathVariable Integer mediaId) {
         try {
@@ -69,7 +69,7 @@ public class WatchlistEntryController {
         }
     }
     
-    // Update scare rating 
+    // Updates scare rating
     @PutMapping("/{watchlistEntryId}/scare-rating")
     public ResponseEntity<WatchlistEntry> updateScareRating(@PathVariable Integer watchlistEntryId, @RequestBody Integer newScareRating) {
         try {
@@ -79,7 +79,7 @@ public class WatchlistEntryController {
         }  
     }
     
-    // Update watch status
+    // Updates watch status
     @PutMapping("/{watchlistEntryId}/status")
     public ResponseEntity<WatchlistEntry> updateWatchStatus(@PathVariable Integer watchlistEntryId, @RequestBody WatchStatus newStatus)  {
         try {
@@ -89,7 +89,7 @@ public class WatchlistEntryController {
         }
     }
 
-    // Delete entry
+    // Deletes entry from user's watchlist
     @DeleteMapping("/{watchlistEntryId}")
     public ResponseEntity<Void> deleteWatchlistEntryById(@PathVariable Integer watchlistEntryId) {
         try {

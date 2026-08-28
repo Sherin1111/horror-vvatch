@@ -27,11 +27,13 @@ public class ContentWarningController {
         this.contentWarningService = contentWarningService;
     }
 
+    // Gets all content warnings
     @GetMapping
     public List<ContentWarning> getAllContentWarnings() {
         return contentWarningService.getAllContentWarnings();
     }
 
+     // Gets content warning by ID
     @GetMapping("/{warningId}")
     public ContentWarning getContentWarningById(@PathVariable Integer warningId) {
         try {
@@ -41,11 +43,13 @@ public class ContentWarningController {
         }
     }
     
+    // Gets content warning by name
     @GetMapping("/search")
     public List<ContentWarning> getContentWarningByName(@RequestParam String warningName) {
         return contentWarningService.getContentWarningByName(warningName);
     }
     
+    // Gets media without a specific content warning
     @GetMapping("/{warningId}/exclude-media")
     public Set<Media> getMediaWithoutWarning(@PathVariable Integer warningId) {
         try {
@@ -54,6 +58,5 @@ public class ContentWarningController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content warning not found", exception);
         }
     }
-    
     
 }

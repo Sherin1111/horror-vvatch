@@ -10,11 +10,10 @@ import com.horrorvvatch.backend.user.User;
 
 public interface WatchlistEntryRepository extends ListCrudRepository<WatchlistEntry, Integer> {
 
-    
+    // Finds all users
     List<WatchlistEntry> findAllByUserOrderByDateAddedDesc(User user);
-
   
+    // Finds user and media
     Optional<WatchlistEntry> findByUserAndMedia(User user, Media media);
-
 
 }

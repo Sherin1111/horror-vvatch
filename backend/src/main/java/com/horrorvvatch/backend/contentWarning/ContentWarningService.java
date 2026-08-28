@@ -21,26 +21,26 @@ public class ContentWarningService {
         this.mediaRepository = mediaRepository;
     }
 
-    //Get all content warnings
+    // Gets all content warnings
     public List<ContentWarning> getAllContentWarnings() {
         return contentWarningRepository.findAll();
     }
 
-    //Get content warning by id
+    // Gets content warning by ID
     public ContentWarning getContentWarningById(Integer warningId) {
         return contentWarningRepository.findById(warningId)
         .orElseThrow(() -> new NoSuchElementException("No content warning with id: " + warningId));
     }
 
-    //Get content warning by name
+    // Gets content warning by name
     public List<ContentWarning> getContentWarningByName(String warningName) {
         return contentWarningRepository.findByWarningNameContainingIgnoreCase(warningName);
     }
 
-    //Exclude media with a specific content warning
+    // Gets media without a specific content warning
     public Set<Media> getMediaWithoutWarning(Integer warningId) {
         ContentWarning warning = getContentWarningById(warningId);
-        Set<Media> mediaWithWarning = warning.getMediaTitles();
+        Set<Media> mediaWithWarning = warning.getMedia();
         
         return mediaRepository.findAll().stream()
             .filter(m -> !mediaWithWarning.contains(m))

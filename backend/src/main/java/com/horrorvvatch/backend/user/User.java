@@ -56,62 +56,62 @@ public class User {
 
      // Getters and setters
 
-     // Returns userId
+     // Gets userId
      public Integer getUserId() {
         return userId;
      }
 
-     // Returns username
+     // Gets username
      public String getUsername() {
         return username;
     }
 
-    // To set and updates username
+    // Sets username
     public void setUsername( String username) {
         this.username = username;
     }
 
-    // Returns firstName
+    // Gets firstName
     public String getFirstName() {
         return firstName;
     }
 
-    // To set and updates firstName
+    // Sets firstName
     public void setFirstName( String firstName) {
         this.firstName = firstName;
     }
 
-     // Returns lastName
+     // Gets lastName
     public String getLastName() {
         return lastName;
     }
 
-    // To set and updates lastName
+    // Sets lastName
     public void setLastName( String lastName) {
         this.lastName = lastName;
     }
 
-     // Returns email
+     // Gets email
     public String getEmail() {
         return email;
     }
 
-    // To set and updates email
+    // Sets email
     public void setEmail( String email) {
         this.email = email;
     }
 
-     // Get password
+     // Gets password hash
     public String getPasswordHash() {
         return passwordHash;
     }
 
-    // To set and update password
+    // Sets password hash
     public void setPasswordHash( String passwordHash) {
         this.passwordHash = passwordHash;
     }
 
-    // Returns createdAt
+    // Gets time and date
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

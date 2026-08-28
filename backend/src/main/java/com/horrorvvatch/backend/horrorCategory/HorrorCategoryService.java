@@ -17,26 +17,26 @@ public class HorrorCategoryService {
         this.horrorCategoryRepository = horrorCategoryRepository;
     }
 
-    //Get all horror categories 
+    // Gets all horror categories 
     public List<HorrorCategory> getAllHorrorCategories() {
         return horrorCategoryRepository.findAll();
     }
 
-    //Get horror category by id
+    // Gets horror category by ID
     public HorrorCategory getCategoryById(Integer categoryId) {
         return horrorCategoryRepository.findById(categoryId)
         .orElseThrow(() -> new NoSuchElementException("No horror category with id: " + categoryId));    
     }
     
-    //Get horror category by category name
+    // Gets horror category by name
     public List<HorrorCategory> getHorrorCategoryByName(String categoryName) {
         return horrorCategoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
     }
 
-    //Get media by category 
+    // Gets media by category 
     public Set<Media> getMediaByCategory(Integer categoryId) {
         HorrorCategory category = getCategoryById(categoryId);
-        return category.getMediaTitles();
+        return category.getMedia();
     }
 
 

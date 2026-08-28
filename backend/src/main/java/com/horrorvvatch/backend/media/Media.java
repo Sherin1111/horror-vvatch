@@ -65,7 +65,7 @@ public class Media {
         inverseJoinColumns = @JoinColumn(name = "category_id"))
     Set<HorrorCategory> horrorCategories;
 
-    //Relashionship to Content Warning
+    // Relationship to Content Warning
     @ManyToMany
     @JoinTable(
         name ="media_content_warning",

@@ -18,18 +18,18 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
     } 
 
-    // Get review by id
+    // Gets review by ID
     public Review getReviewById(Integer reviewId) {
         return reviewRepository.findById(reviewId)
         .orElseThrow(() -> new NoSuchElementException("Review not found"));
     }
 
-    // Get all reviews for a specific media
+    // Gets all reviews for a specific media
     public List<Review> getAllReviews(Media media) {
         return reviewRepository.findAllByMediaOrderByCreatedAtDesc(media);
     }
 
-    // Add a review for a specific media
+    // Adds a review for a specific media
     public Review addReviewToMedia(User user, Media media, String reviewText) {
         if(reviewText == null || reviewText.isBlank()) {
             throw new IllegalArgumentException("Review cannot be empty"); 
@@ -42,7 +42,7 @@ public class ReviewService {
         return reviewRepository.save(review); 
     }
 
-    // update/edit existing review
+    // Updates existing review
     public Review updateReview(Integer reviewId, String updatedReviewText) {
        Review review = reviewRepository.findById(reviewId)
        .orElseThrow(() -> new NoSuchElementException("No review with id: " + reviewId));
@@ -57,7 +57,7 @@ public class ReviewService {
        
     }
 
-    // Delete a review
+    // Deletes a review
     public void deleteReview(Integer reviewId) {
         getReviewById(reviewId);
         reviewRepository.deleteById(reviewId);

@@ -28,11 +28,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    // Gets all users
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    // Gets users by id
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable Integer userId) {
         try {
@@ -42,11 +44,13 @@ public class UserController {
         }
     }
 
+     // Gets user by username
     @GetMapping("/search")
     public List<User> searchUserByUsername(@RequestParam String username) {
         return userService.searchUserByUsername(username);
     }
 
+    // Gets user by email
     @GetMapping("/by-email")
     public User getUserByEmail(@RequestParam String email) {
         try {
@@ -56,7 +60,7 @@ public class UserController {
         }
     }
     
-    
+    // Creates new user
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
         try {
@@ -68,6 +72,7 @@ public class UserController {
      
     }
 
+    // Login: checks user exists
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -84,6 +89,7 @@ public class UserController {
         }
     }
     
+    // Updates user
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User user) {
         try {
@@ -93,6 +99,7 @@ public class UserController {
         }
     }
 
+    //Deletes user by id
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer userId) {
         try {

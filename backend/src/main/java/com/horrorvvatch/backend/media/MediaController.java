@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 
-//Controller is the API/web layer. It receives HTTP request, and calls service to perform actions and returns the respones
 @RestController
 @RequestMapping("/api/media")
 public class MediaController {
@@ -23,11 +22,13 @@ public class MediaController {
         this.mediaService = mediaService;
     }
 
+    // Gets all media (movies and TV shows)
     @GetMapping
     public List<Media> getAllMedia() {
         return mediaService.getAllMedia();
     }
 
+    //Gets media by ID 
     @GetMapping("/{mediaId}")
     public Media getMediaId(@PathVariable Integer mediaId) {
         try {
@@ -37,11 +38,10 @@ public class MediaController {
             }
     }
 
+    //Gets media by title
     @GetMapping("/search")
     public List<Media> getMediaTitle(@RequestParam String title) {
         return mediaService.getMediaTitle(title);
-    }
-
-        
+    }    
 
 }

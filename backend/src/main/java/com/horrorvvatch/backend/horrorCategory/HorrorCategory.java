@@ -23,9 +23,9 @@ public class HorrorCategory {
     @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName; 
 
-    //Relationship to Media entity
+    // Relationship to Media entity
     @ManyToMany(mappedBy ="horrorCategories")
-    Set<Media> mediaTitles;
+    Set<Media> media;
 
     // Parameterised constructor
     public HorrorCategory(String categoryName) {
@@ -36,18 +36,18 @@ public class HorrorCategory {
     public HorrorCategory() {
     }
 
-    //Getter to return horror category by id
+    // Gets horror category by id
     public Integer getCategoryId() {
         return categoryId; 
     }
 
-    //Getter to return horror category by name
+    // Gets horror category by name
     public String getCategoryName() {
         return categoryName;
     }
 
-    //Getter return media titles from Media
-    public Set<Media> getMediaTitles() {
-        return mediaTitles;
+    // Gets media objects
+    public Set<Media> getMedia() {
+        return media;
     }
 }

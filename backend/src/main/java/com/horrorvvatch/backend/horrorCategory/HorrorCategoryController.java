@@ -26,11 +26,13 @@ public class HorrorCategoryController {
         this.horrorCategoryService = horrorCategoryService;
     }
 
+    // Gets all horror categories 
     @GetMapping
     public List<HorrorCategory> getAllHorrorCategories() {
         return horrorCategoryService.getAllHorrorCategories();
     }
 
+    // Gets horror category by ID
     @GetMapping("/{categoryId}")
     public HorrorCategory getCategoryById(@PathVariable Integer categoryId) {
         try {
@@ -40,11 +42,13 @@ public class HorrorCategoryController {
         }
     }
 
+    // Gets horror category by name
     @GetMapping("/search")
     public List<HorrorCategory> getHorrorCategoryByName(@RequestParam String categoryName) {
         return horrorCategoryService.getHorrorCategoryByName(categoryName);
     }
 
+    // Gets media by category 
     @GetMapping("/{categoryId}/media")
     public Set<Media> getMediaByCategory(@PathVariable Integer categoryId) {
         try {

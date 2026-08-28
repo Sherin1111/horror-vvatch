@@ -25,7 +25,7 @@ public class ContentWarning {
 
     //Relationship to media enitiy
     @ManyToMany(mappedBy = "contentWarnings") 
-    Set<Media> mediaTitles;
+    Set<Media> media;
 
     // Parameterised constructor
     public ContentWarning(String warningName) {
@@ -36,18 +36,18 @@ public class ContentWarning {
     public ContentWarning() {
     }
 
-    //Getter to return content warning by id
+    // Gets content warning by ID
     public Integer getWarningId() {
         return warningId;
     }
 
-    //Getter to return content warning by name
+    // Gets content warning by name
     public String getWarningName() {
         return warningName;
     }
 
-    //Getter return media titles from Media
-     public Set<Media> getMediaTitles() {
-        return mediaTitles;
+    /// Gets media objects
+     public Set<Media> getMedia() {
+        return media;
     }
 }
