@@ -42,14 +42,19 @@ Another goal is to have a fun status system:
 
 ## 3. MVP
 
-- User registration and login
-- User profile management
-- Browse stored horror movies and TV shows
-- Personal watchlist
-- Three watch statuses
-- 1–5 Ghost Rating
-- Write, edit, and delete reviews
-- View reviews for a media title
+| Feature                 | Status      |
+| ----------------------- | ----------- |
+| User registration       | Complete    |
+| User login              | Complete    |
+| User profile management | Complete    |
+| Media browsing/search   | Complete    |
+| Horror categories       | Complete    |
+| Content warnings        | Complete    |
+| Personal watchlist      | Complete    |
+| Watch status            | Complete    |
+| Ghost Rating            | Complete    |
+| Reviews                 | Complete    |
+| Frontend integration    | In progress |
 
 ---
 
@@ -144,6 +149,8 @@ For example:
 - `user`
 - `horrorCategory`
 - `contentWarning`
+- `WatchlistEntry`
+- `Review`
 
 Each feature contains the entity, repository, service, and controller classes
 required by that feature.
@@ -160,17 +167,19 @@ Current folder structure, to be updated as the project develops:
 ```text
 horror-vvatch/
 backend/
-├── src/
-│   └── main/
-│       └── java/
-│           └── com/
-│               └── horrorvvatch/
-│                   └── backend/
-│                       ├── config/
-│                       ├── contentWarning/
-│                       ├── horrorCategory/
-│                       ├── media/
-│                       └── user/
+└── src/
+    └── main/
+        └── java/
+            └── com/
+                └── horrorvvatch/
+                    └── backend/
+                        ├── config/
+                        ├── contentWarning/
+                        ├── horrorCategory/
+                        ├── media/
+                        ├── review/
+                        ├── user/
+                        └── watchlistEntry/
 │   ├── pom.xml
 │   └── mvnw
 │
@@ -247,16 +256,29 @@ warnings.
 
 ### Database Implementation
 
-The MySQL schema has been created and tested successfully. It includes primary
-keys, foreign keys, unique constraints, enum values, composite primary keys, and
-a check constraint limiting scare ratings to values from 1 to 5.
+The database schema is generated and managed by Spring Boot using
+Hibernate/JPA.
 
-Hibernate automatically maps the Java entities to the MySQL database tables through Spring Data JPA.
+The Java entity classes define the database structure, including
+primary keys, relationships, nullable fields and enumerated values.
 
-The schema was verified by successfully creating the tables in MySQL and
-populating the database using the initial seed data. The seed data includes
-movies, TV shows, horror categories, content warnings, and the junction-table
-relationships connecting categories and warnings to media.
+Hibernate creates and updates the corresponding MySQL tables using:
+
+spring.jpa.hibernate.ddl-auto=update
+
+The database was recreated from the Spring Boot entities and successfully
+populated with sample data.
+
+The generated database includes:
+
+- users
+- media
+- horror_category
+- content_warning
+- watchlist_entry
+- review
+- media_horror_category
+- media_content_warning
 
 ### Initial Seed Data
 
@@ -271,6 +293,24 @@ The initial seed data contains:
 
 ### Database Relationships
 
+Horror VVatch uses several relationships between entities.
+
+- One User can have many WatchlistEntry records.
+- One User can have many Review records.
+- One Media title can have many WatchlistEntry records.
+- One Media title can have many Review records.
+- Media and HorrorCategory have a many-to-many relationship.
+- Media and ContentWarning have a many-to-many relationship.
+
+The many-to-many relationships are implemented using the junction tables:
+
+- media_horror_category
+- media_content_warning
+
+These relationships were tested after the database was recreated by
+Spring Boot, and sample records were successfully inserted into the
+junction tables.
+
 The following entity relationship diagram (ERD) illustrates the relationships
 between the database tables used in Horror VVatch.
 
@@ -282,9 +322,7 @@ between the database tables used in Horror VVatch.
 
 The following endpoints define the current and planned REST API for Horror VVatch.
 
-The User, Media, Horror Category, and Content Warning endpoints have been
-implemented and tested using Postman. Watchlist and Review endpoints are
-planned as the next core backend features.
+The User, Media, Horror Category, Content Warning, Watchlist and Review endpoints have been implemented and tested using Postman.
 
 ### Users
 
@@ -307,24 +345,6 @@ planned as the next core backend features.
 | `GET`  | `/api/media/{mediaId}`            | Retrieve one movie or TV show by its ID                    |
 | `GET`  | `/api/media/search?title={title}` | Search for media by title (case-insensitive partial match) |
 
-### Watchlist
-
-| Method   | Endpoint                            | Description                                                                 |
-| -------- | ----------------------------------- | --------------------------------------------------------------------------- |
-| `POST`   | `/api/watchlist`                    | Add a movie or TV show to a user's watchlist                                |
-| `GET`    | `/api/users/{userId}/watchlist`     | Retrieve all media in a user's watchlist                                    |
-| `PUT`    | `/api/watchlist/{watchlistEntryId}` | Update an entry, such as changing the watch status or adding a scare rating |
-| `DELETE` | `/api/watchlist/{watchlistEntryId}` | Remove a movie or TV show from the user's watchlist                         |
-
-### Reviews
-
-| Method   | Endpoint                       | Description                                                  |
-| -------- | ------------------------------ | ------------------------------------------------------------ |
-| `POST`   | `/api/reviews`                 | Create a review for a movie or TV show                       |
-| `GET`    | `/api/media/{mediaId}/reviews` | Retrieve all reviews written for a specific movie or TV show |
-| `PUT`    | `/api/reviews/{reviewId}`      | Edit an existing review                                      |
-| `DELETE` | `/api/reviews/{reviewId}`      | Delete an existing review                                    |
-
 #### Horror Categories
 
 | Method | Endpoint                                     | Description                                   |
@@ -342,6 +362,27 @@ planned as the next core backend features.
 | `GET`  | `/api/content-warnings/{warningId}`               | Retrieve a content warning by ID                                   |
 | `GET`  | `/api/content-warnings/search?warningName={name}` | Search content warnings by name                                    |
 | `GET`  | `/api/content-warnings/{warningId}/exclude-media` | Retrieve media that does not contain the specified content warning |
+
+#### Watchlist
+
+| Method   | Endpoint                                         | Description            |
+| -------- | ------------------------------------------------ | ---------------------- |
+| `GET`    | `/api/watchlist/{watchlistEntryId}`              | Get a watchlist entry  |
+| `GET`    | `/api/watchlist/users/{userId}`                  | Get a user's watchlist |
+| `POST`   | `/api/watchlist/users/{userId}/media/{mediaId}`  | Add media to watchlist |
+| `PUT`    | `/api/watchlist/{watchlistEntryId}/scare-rating` | Update scare rating    |
+| `PUT`    | `/api/watchlist/{watchlistEntryId}/status`       | Update watch status    |
+| `DELETE` | `/api/watchlist/{watchlistEntryId}`              | Delete watchlist entry |
+
+#### Review
+
+| Method | Endpoint                                     | Description                       |
+| ------ | -------------------------------------------- | --------------------------------- |
+| GET    | `/api/review/{reviewId}`                     | Get a review by ID                |
+| GET    | `/api/review/media/{mediaId}`                | Get all reviews for a media title |
+| POST   | `/api/review/users/{userId}/media/{mediaId}` | Add a review                      |
+| PUT    | `/api/review/{reviewId}`                     | Update a review                   |
+| DELETE | `/api/review/{reviewId}`                     | Delete a review                   |
 
 ---
 
@@ -392,6 +433,23 @@ returns `401 Unauthorized`.
 
 The current implementation verifies credentials but does not yet provide
 JWT or session-based authentication.
+
+#### Security
+
+User passwords are never stored as plain text.
+
+When a user registers, the submitted password is passed to Spring
+Security's PasswordEncoder and encoded before being stored in the
+database.
+
+The password field is also configured as write-only using
+@JsonProperty(access = WRITE_ONLY), meaning the password can be
+received in a request but is not returned in API responses.
+
+Login credentials are checked using PasswordEncoder.matches().
+
+The current implementation verifies credentials but does not yet
+implement session-based or JWT authentication.
 
 ### Media Feature
 
@@ -460,6 +518,54 @@ Examples include:
 The API also supports excluding media containing a particular content warning.
 This can be used by the frontend to allow users to filter out content they
 would prefer to avoid.
+
+### Watchlist Feature
+
+The Watchlist feature allows users to add horror movies and TV shows
+to their personal watchlist.
+
+Each watchlist entry belongs to one User and one Media title.
+
+Users can:
+
+- Add media to their watchlist
+- View their watchlist
+- Update the watch status
+- Add a Ghost Rating
+- Mark a title as watched
+- Remove a title from their watchlist
+
+Watch statuses are represented using the WatchStatus enum:
+
+- NOT_WATCHED
+- IN_PROGRESS
+- WATCHED
+
+When a title is marked as WATCHED, the dateCompleted value is recorded.
+If the title is moved back to another status, the completion date is
+removed.
+
+### Review Feature
+
+The Review feature allows users to optionally leave a written review
+for a movie or TV show.
+
+A user can have a maximum of one review for each media title.
+
+Users can:
+
+- Create a review
+- View reviews for a media title
+- Edit an existing review
+- Delete a review
+
+Review text cannot be empty.
+
+Reviews are ordered by creation date, with the most recent reviews
+returned first.
+
+Writing a review is optional. Users can add a title to their watchlist
+and rate it without having to leave a written review.
 
 ---
 
@@ -568,6 +674,47 @@ _Requesting a media title with an ID that does not exist returns `404 Not Found`
 
 ![Postman response showing content warning not found](images/content-warning-error.png)
 
+### Watchlist
+
+| Test                                     | Expected result  | Result |
+| ---------------------------------------- | ---------------- | ------ |
+| Retrieve watchlist entry by ID           | `200 OK`         | Pass   |
+| Retrieve all media in a user's watchlist | `200 OK`         | Pass   |
+| Adds media to the user's watchlist       | `201 Created`    | Pass   |
+| Updates scare rating                     | `200 OK`         | Pass   |
+| Updates watch status                     | `200 OK`         | Pass   |
+| Deletes entry from user's watchlist      | `204 No Content` | Pass   |
+
+#### Media added to a users watchlist
+
+![Adding media to watchlist](images/add-to-watchlist.png)
+
+#### Entry status changed to 'WATCHED'
+
+![Entry status changed to watched](images/changed-status-watched.png)
+
+#### Changed scare rating from 0 to 4
+
+![Changed scare rating to 4](images/scare-rating-4.png)
+
+### Reviews
+
+| Test                                      | Expected result  | Result |
+| ----------------------------------------- | ---------------- | ------ |
+| Retrieve a review by ID                   | `200 OK`         | Pass   |
+| Retrieve all reviews for a specific media | `200 OK`         | Pass   |
+| Adds a review for a specific media        | `201 Created`    | Pass   |
+| Updates existing review                   | `200 OK`         | Pass   |
+| Deletes a review                          | `204 No Content` | Pass   |
+
+#### Adds a review to a specific media
+
+![Adding a review ](images/added-review.png)
+
+#### Retrieve all reviews for a specific media
+
+![Retrieving all reviews for a specific media](images/all-reviews-one-media.png)
+
 ## 14. Challenges and Solutions
 
 ### Media Controller Not Found (404)
@@ -597,6 +744,19 @@ CSRF protection was also disabled for the current REST API development setup.
 
 This allowed the existing endpoints to continue working while still using
 Spring Security's `PasswordEncoder` for secure password storage.
+
+### Recreating the Database Using Spring Boot
+
+During development, the database schema was initially created manually.
+
+As the backend entities became more complete, the database tables were
+removed and recreated using the Spring Boot/JPA entity definitions.
+
+This required checking that the entity relationships, foreign keys and
+many-to-many junction tables were correctly mapped.
+
+After recreating the schema, sample data was inserted and the
+relationships were tested successfully.
 
 ---
 
