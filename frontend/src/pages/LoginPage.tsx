@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LoginForm from "../components/LoginForm";
+import { Box, Center, Heading } from "@chakra-ui/react";
 
 function LoginPage() {
 	const [email, setEmail] = useState<string>("");
@@ -32,8 +33,17 @@ function LoginPage() {
 	}
 
 	return (
-		<div>
-			<h1> Horror VVatch</h1>
+		<Box>
+			<Center>
+				<Heading
+					size="7xl"
+					fontFamily="branding"
+					color="green"
+					paddingTop="50px"
+					paddingBottom="30px">
+					Login Form
+				</Heading>
+			</Center>
 
 			<section>
 				<LoginForm
@@ -45,7 +55,7 @@ function LoginPage() {
 					onSubmit={handleLogin}
 				/>
 			</section>
-		</div>
+		</Box>
 	);
 }
 

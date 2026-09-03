@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RegistrationForm from "../components/RegistrationForm";
+import { Center, Heading } from "@chakra-ui/react";
 
 function RegistrationPage() {
 	const [username, setUsername] = useState<string>("");
@@ -40,7 +41,16 @@ function RegistrationPage() {
 
 	return (
 		<div>
-			<h1>Horror VVatch</h1>
+			<Center>
+				<Heading
+					size="7xl"
+					fontFamily="branding"
+					color="green"
+					paddingTop="50px"
+					paddingBottom="30px">
+					Sign Up Form
+				</Heading>
+			</Center>
 			<section>
 				<RegistrationForm
 					username={username}

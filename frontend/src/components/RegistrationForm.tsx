@@ -1,3 +1,4 @@
+import { Center, Box, Stack, Field, Input, Button } from "@chakra-ui/react";
 import type React from "react";
 import { useState } from "react";
 
@@ -85,68 +86,94 @@ function RegistrationForm({
 	}
 
 	return (
-		<div>
-			<h2>Registration Form</h2>
-			<form onSubmit={handleSubmit}>
-				<label>
-					Username
-					<input
-						type="text"
-						placeholder="Username"
-						value={username}
-						onChange={(event) => onUsernameChange(event.target.value)}
-						name="username"
-					/>
-					{errors.username && <p>{errors.username}</p>}
-				</label>
-				<label>
-					First Name
-					<input
-						type="text"
-						placeholder="First name"
-						value={firstName}
-						onChange={(event) => onFirstNameChange(event.target.value)}
-						name="firstName"
-					/>
-					{errors.firstName && <p>{errors.firstName}</p>}
-				</label>
-				<label>
-					Last Name
-					<input
-						type="text"
-						placeholder="Last name"
-						value={lastName}
-						onChange={(event) => onLastNameChange(event.target.value)}
-						name="lastName"
-					/>
-					{errors.lastName && <p>{errors.lastName}</p>}
-				</label>
-				<label>
-					Email
-					<input
-						type="text"
-						placeholder="Email"
-						value={email}
-						onChange={(event) => onEmailChange(event.target.value)}
-						name="email"
-					/>
-					{errors.email && <p>{errors.email}</p>}
-				</label>
-				<label>
-					Password
-					<input
-						type="password"
-						placeholder="Password"
-						value={password}
-						onChange={(event) => onPasswordChange(event.target.value)}
-						name="password"
-					/>
-					{errors.password && <p>{errors.password}</p>}
-				</label>
-				<input type="submit" />
-				{registrationMessage && <p>{registrationMessage}</p>}
-			</form>
-		</div>
+		<Center>
+			<Box bg="navyLight" width="500px" padding="35px">
+				<form onSubmit={handleSubmit}>
+					<Stack>
+						<Field.Root>
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Username
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="text"
+								placeholder="Enter your username"
+								value={username}
+								onChange={(event) => onUsernameChange(event.target.value)}
+								name="username"
+							/>
+							<Field.ErrorText>{errors.username}</Field.ErrorText>
+						</Field.Root>
+
+						<Field.Root>
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								First Name
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="text"
+								placeholder="Enter your first name"
+								value={firstName}
+								onChange={(event) => onFirstNameChange(event.target.value)}
+								name="firstName"
+							/>
+							<Field.ErrorText>{errors.firstName}</Field.ErrorText>
+						</Field.Root>
+
+						<Field.Root>
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Last Name
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="text"
+								placeholder="Enter your last name"
+								value={lastName}
+								onChange={(event) => onLastNameChange(event.target.value)}
+								name="lastName"
+							/>
+							<Field.ErrorText>{errors.lastName}</Field.ErrorText>
+						</Field.Root>
+
+						<Field.Root>
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Email
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="text"
+								placeholder="Enter your email"
+								value={email}
+								onChange={(event) => onEmailChange(event.target.value)}
+								name="email"
+							/>
+							<Field.ErrorText>{errors.email}</Field.ErrorText>
+						</Field.Root>
+
+						<Field.Root paddingBottom="20px">
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Password
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="password"
+								placeholder="Enter your password"
+								value={password}
+								onChange={(event) => onPasswordChange(event.target.value)}
+								name="password"
+							/>
+							<Field.ErrorText>{errors.password}</Field.ErrorText>
+						</Field.Root>
+
+						<Button bg="purple" fontFamily="accentFont" type="submit">
+							{" "}
+							Sign Up
+						</Button>
+						{registrationMessage && <p>{registrationMessage}</p>}
+					</Stack>
+				</form>
+			</Box>
+		</Center>
 	);
 }
 

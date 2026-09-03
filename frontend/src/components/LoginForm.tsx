@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Box, Button, Stack, Center, Field, Input } from "@chakra-ui/react";
 
 interface LoginFormProps {
 	email: string;
@@ -51,37 +52,48 @@ function LoginForm({
 	}
 
 	return (
-		<div>
-			<h2>Login Form</h2>
+		<Center>
+			<Box bg="navyLight" width="500px" padding="35px">
+				<form onSubmit={handleSubmit}>
+					<Stack>
+						<Field.Root>
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Email
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="text"
+								placeholder="Enter your email"
+								value={email}
+								onChange={(event) => onEmailChange(event.target.value)}
+								name="email"
+							/>
+							<Field.ErrorText>{errors.email}</Field.ErrorText>
+						</Field.Root>
 
-			<form onSubmit={handleSubmit}>
-				<label>
-					Email
-					<input
-						type="text"
-						placeholder="Email"
-						value={email}
-						onChange={(event) => onEmailChange(event.target.value)}
-						name="email"
-					/>
-					{errors.email && <p>{errors.email}</p>}
-				</label>
+						<Field.Root paddingBottom="20px">
+							<Field.Label fontFamily="mainFont" color="paleLavender">
+								Password
+							</Field.Label>
+							<Input
+								bg="navy"
+								type="password"
+								placeholder="Enter your password"
+								value={password}
+								onChange={(event) => onPasswordChange(event.target.value)}
+								name="password"
+							/>
+							<Field.ErrorText>{errors.password}</Field.ErrorText>
+						</Field.Root>
 
-				<label>
-					Password
-					<input
-						type="password"
-						placeholder="Password"
-						value={password}
-						onChange={(event) => onPasswordChange(event.target.value)}
-						name="password"
-					/>
-					{errors.password && <p>{errors.password}</p>}
-				</label>
-				<button type="submit">Login</button>
-				{loginMessage && <p>{loginMessage}</p>}
-			</form>
-		</div>
+						<Button bg="purple" fontFamily="accentFont" type="submit">
+							Login
+						</Button>
+						{loginMessage && <p>{loginMessage}</p>}
+					</Stack>
+				</form>
+			</Box>
+		</Center>
 	);
 }
 
