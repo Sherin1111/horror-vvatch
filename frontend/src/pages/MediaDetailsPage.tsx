@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Media } from "@/types/media";
 import type { WatchlistEntry } from "@/types/watchlist";
+import type { Review } from "@/types/review";
 import {
 	Badge,
 	Box,
@@ -50,30 +51,20 @@ const contentWarnings = [
 	"Psychological Horror",
 ];
 
-const sampleReviews = [
-	{
-		user: "buffy321",
-		text: "Still one of the best supernatural shows out there. The mix of horror, comedy and genuinely emotional storylines makes it ridiculously watchable. Some episodes still hit just as hard years later.",
-		rating: ["👻", "👻", "👻", "👻", "👻"],
-	},
-	{
-		user: "onyx111",
-		text: "I can see why the vampires and staked for the characters. Buffy, Willow and Xander feel like such believable group of friends, and the show somehow manages to balance ridiculous monster-of-the-week episodes with surprisingly dark themes.",
-		rating: ["👻", "👻", "👻", "👻"],
-	},
-	{
-		user: "tom86",
-		text: "A classic for a reason. The early seasons are fun and campy, but the show really grows into something much darker. The supernatural elements are great, but it’s the friendships and character development that make it memorable.",
-		rating: ["👻", "👻", "👻"],
-	},
-];
-
 function MediaDetailsPage() {
 	const { mediaId } = useParams<{ mediaId: string }>();
 	const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
 	const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
 	const [watchlistEntryId, setWatchlistEntryId] = useState<number | null>(null);
 	const [scareRating, setScareRating] = useState<number | null>(null);
+	const [reviews, setReviews] = useState<Review[]>([]);
+	const [reviewText, setReviewText] = useState("");
+	const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
+	const [isEditingReview, setIsEditingReview] = useState(false);
+
+	const currentUserReview = reviews.find(
+		(review) => review.user?.userId === currentUser.userId,
+	);
 
 	useEffect(() => {
 		if (!mediaId) return;
@@ -133,6 +124,25 @@ function MediaDetailsPage() {
 		fetchWatchlistIds();
 	}, [mediaId]);
 
+	useEffect(() => {
+		const fetchReviews = async () => {
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/review/media/${mediaId}`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch reviews");
+				}
+
+				const data: Review[] = await response.json();
+				setReviews(data);
+			} catch (error) {
+				console.error("Error fetching reviews", error);
+			}
+		};
+		fetchReviews();
+	}, [mediaId]);
+
 	const handleAddtoWatchlist = async (mediaIdToAdd: number) => {
 		try {
 			const response = await fetch(
@@ -183,6 +193,59 @@ function MediaDetailsPage() {
 			setScareRating(newScareRating);
 		} catch (error) {
 			console.error("Error updating scare rating:", error);
+		}
+	};
+
+	const handleReviewSubmit = async () => {
+		if (!reviewText.trim()) return;
+
+		try {
+			let response;
+
+			if (isEditingReview && currentUserReview) {
+				response = await fetch(
+					`http://localhost:8080/api/review/${currentUserReview.reviewId}`,
+					{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(reviewText.trim()),
+					},
+				);
+			} else {
+				response = await fetch(
+					`http://localhost:8080/api/review/users/${currentUser.userId}/media/${mediaId}`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(reviewText.trim()),
+					},
+				);
+			}
+
+			if (!response.ok) {
+				throw new Error("Failed to submit review");
+			}
+
+			const reviewResponse = await fetch(
+				`http://localhost:8080/api/review/media/${mediaId}`,
+			);
+
+			if (!reviewResponse.ok) {
+				throw new Error("Failed to fetch review");
+			}
+
+			const updateReviews: Review[] = await reviewResponse.json();
+
+			setReviews(updateReviews);
+			setReviewText("");
+			setHasSubmittedReview(true);
+			setIsEditingReview(false);
+		} catch (error) {
+			console.error("Error submitting review:", error);
 		}
 	};
 
@@ -315,18 +378,67 @@ function MediaDetailsPage() {
 							mb="10px">
 							Add a review
 						</Text>
+						{!hasSubmittedReview || isEditingReview ? (
+							<>
+								<Textarea
+									placeholder="Write your review..."
+									bg="navyLight"
+									color="cream"
+									border="1px solid"
+									borderColor="paleLavender"
+									borderRadius="none"
+									minH="120px"
+									resize="vertical"
+									value={reviewText}
+									onChange={(e) => setReviewText(e.target.value)}
+									_placeholder={{ color: "paleLavender" }}
+								/>
 
-						<Textarea
-							placeholder="Write your review..."
-							bg="navyLight"
-							color="cream"
-							border="1px solid"
-							borderColor="paleLavender"
-							borderRadius="none"
-							minH="120px"
-							resize="vertical"
-							_placeholder={{ color: "paleLavender" }}
-						/>
+								<Button
+									mt="12px"
+									bg="purple"
+									color="cream"
+									border="1px solid"
+									borderColor="paleLavender"
+									_hover={{ bg: "pink" }}
+									fontFamily="accentFont"
+									onClick={handleReviewSubmit}
+									disabled={!reviewText.trim()}>
+									{isEditingReview ? "Update Review" : "Submit Review"}
+								</Button>
+
+								{isEditingReview && (
+									<Button
+										mt="12px"
+										ml="12px"
+										bg="transparent"
+										color="pink"
+										border="1px solid"
+										borderColor="paleLavender"
+										onClick={() => {
+											setIsEditingReview(false);
+											setReviewText("");
+										}}>
+										Cancel
+									</Button>
+								)}
+							</>
+						) : (
+							<Button
+								mt="12px"
+								bg="green"
+								color="navy"
+								border="1px solid"
+								borderColor="paleLavender"
+								_hover={{ bg: "pink" }}
+								fontFamily="accentFont"
+								onClick={() => {
+									setIsEditingReview(true);
+									setReviewText(currentUserReview?.reviewText ?? "");
+								}}>
+								Edit Review
+							</Button>
+						)}
 					</Box>
 					<Select.Root
 						collection={scareRatingCollection}
@@ -389,7 +501,6 @@ function MediaDetailsPage() {
 							mb="50px">
 							{mediaDetails.summary}
 						</Text>
-
 						<Flex align="center" gap="4" mb="20px">
 							<Button
 								bg={isInWatchlist ? "green" : "purple"}
@@ -403,6 +514,8 @@ function MediaDetailsPage() {
 								{isInWatchlist ? "Added" : "Add to Watchlist"}
 							</Button>
 						</Flex>
+
+						<Box color="purple"> Reviews: {reviews.length} </Box>
 
 						<Box
 							mt="250px"
@@ -422,9 +535,9 @@ function MediaDetailsPage() {
 							</Center>
 
 							<VStack gap="6px" align="stretch">
-								{sampleReviews.map((review) => (
+								{reviews.map((review) => (
 									<Box
-										key={review.user}
+										key={review.reviewId}
 										borderBottom="1px solid"
 										borderColor="green"
 										pb="15px">
@@ -434,7 +547,7 @@ function MediaDetailsPage() {
 											fontSize="2xl"
 											color="purple"
 											mb="10px">
-											{review.user}
+											{review.user?.username ?? "Unknown user"}
 										</Text>
 										<Text
 											fontFamily="mainFont"
@@ -442,11 +555,7 @@ function MediaDetailsPage() {
 											color="paleLavender"
 											lineHeight="1.6"
 											mb="15px">
-											{review.text}
-										</Text>
-
-										<Text fontFamily="accentFont" color="pink" mb="15px">
-											Scare rating: {review.rating.join(" ")}
+											{review.reviewText ?? "No review provided."}
 										</Text>
 									</Box>
 								))}
