@@ -1,3 +1,5 @@
+import type { Category } from "@/types/category";
+import type { ContentWarning } from "@/types/contentWarning";
 import {
 	Badge,
 	Box,
@@ -25,6 +27,8 @@ interface WatchlistEntryCardProps {
 	scareRating: number | null;
 	dateAdded: string | null;
 	dateCompleted: string | null;
+	categories: Category[];
+	contentWarnings: ContentWarning[];
 	onStatusChange: (
 		watchlistEntryId: number,
 		newStatus: "NOT_WATCHED" | "IN_PROGRESS" | "WATCHED",
@@ -66,6 +70,8 @@ function WatchlistEntryCard({
 	scareRating,
 	dateAdded,
 	dateCompleted,
+	categories,
+	contentWarnings,
 	onStatusChange,
 	onScareRatingChange,
 }: WatchlistEntryCardProps) {
@@ -210,30 +216,15 @@ function WatchlistEntryCard({
 									Horror Category
 								</Text>
 								<Flex wrap="wrap" gap="2">
-									<Badge
-										fontFamily="mainFont"
-										bg="paleLavender"
-										fontWeight="bold">
-										Supernatural
-									</Badge>
-									<Badge
-										fontFamily="mainFont"
-										bg="paleLavender"
-										fontWeight="bold">
-										Vampire
-									</Badge>
-									<Badge
-										fontFamily="mainFont"
-										bg="paleLavender"
-										fontWeight="bold">
-										Monster
-									</Badge>
-									<Badge
-										fontFamily="mainFont"
-										bg="paleLavender"
-										fontWeight="bold">
-										Final Girl
-									</Badge>
+									{categories.map((category) => (
+										<Badge
+											key={category.categoryId}
+											fontFamily="mainFont"
+											bg="paleLavender"
+											fontWeight="bold">
+											{category.categoryName}
+										</Badge>
+									))}
 								</Flex>
 							</Box>
 							<Box>
@@ -241,15 +232,15 @@ function WatchlistEntryCard({
 									Content Warning
 								</Text>
 								<Flex wrap="wrap" gap="2">
-									<Badge bg="pink" fontFamily="mainFont" fontWeight="bold">
-										Blood
-									</Badge>
-									<Badge bg="pink" fontFamily="mainFont" fontWeight="bold">
-										Psychological Distress
-									</Badge>
-									<Badge bg="pink" fontFamily="mainFont" fontWeight="bold">
-										Violence
-									</Badge>
+									{contentWarnings.map((warning) => (
+										<Badge
+											key={warning.warningId}
+											bg="pink"
+											fontFamily="mainFont"
+											fontWeight="bold">
+											{warning.warningName}
+										</Badge>
+									))}
 								</Flex>
 							</Box>
 						</Flex>

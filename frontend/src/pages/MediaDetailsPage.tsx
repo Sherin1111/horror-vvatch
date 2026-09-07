@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import type { Media } from "@/types/media";
 import type { WatchlistEntry } from "@/types/watchlist";
 import type { Review } from "@/types/review";
+import type { Category } from "@/types/category";
+import type { ContentWarning } from "@/types/contentWarning";
 import {
 	Badge,
 	Box,
@@ -34,23 +36,6 @@ const currentUser = {
 	username: "demoUser",
 };
 
-const horrorCategories = [
-	"Supernatural",
-	"Vampire",
-	"Monster",
-	"Witches",
-	"Horror Comedy",
-	"Final Girl",
-];
-
-const contentWarnings = [
-	"Violence",
-	"Blood",
-	"Murders",
-	"Sexual Content",
-	"Psychological Horror",
-];
-
 function MediaDetailsPage() {
 	const { mediaId } = useParams<{ mediaId: string }>();
 	const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
@@ -61,6 +46,8 @@ function MediaDetailsPage() {
 	const [reviewText, setReviewText] = useState("");
 	const [hasSubmittedReview, setHasSubmittedReview] = useState(false);
 	const [isEditingReview, setIsEditingReview] = useState(false);
+	const [categories, setCategories] = useState<Category[]>([]);
+	const [contentWarnings, setContentWarnings] = useState<ContentWarning[]>([]);
 
 	const currentUserReview = reviews.find(
 		(review) => review.user?.userId === currentUser.userId,
@@ -118,7 +105,7 @@ function MediaDetailsPage() {
 					setScareRating(null);
 				}
 			} catch (error) {
-				console.error("Error fetching added watchlist", error);
+				console.error("Error fetching added watchlist:", error);
 			}
 		};
 		fetchWatchlistIds();
@@ -137,10 +124,33 @@ function MediaDetailsPage() {
 				const data: Review[] = await response.json();
 				setReviews(data);
 			} catch (error) {
-				console.error("Error fetching reviews", error);
+				console.error("Error fetching reviews:", error);
 			}
 		};
 		fetchReviews();
+	}, [mediaId]);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await fetch(`http://localhost:8080/api/categories`);
+				if (!response.ok) {
+					throw new Error("Failed to fetch horror categories");
+				}
+
+				const data: Category[] = await response.json();
+
+				const filteredCategories = data.filter((entry) =>
+					entry.media.some((m) => m.mediaId === Number(mediaId)),
+				);
+
+				setCategories(filteredCategories);
+				console.log(filteredCategories);
+			} catch (error) {
+				console.error("Error fetching horror categories:", error);
+			}
+		};
+		fetchCategories();
 	}, [mediaId]);
 
 	const handleAddtoWatchlist = async (mediaIdToAdd: number) => {
@@ -170,6 +180,31 @@ function MediaDetailsPage() {
 			console.error("Error adding to watchlist:", error);
 		}
 	};
+
+	useEffect(() => {
+		const fetchContentWarnings = async () => {
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/content-warnings`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch horror categories");
+				}
+
+				const data: ContentWarning[] = await response.json();
+
+				const filteredContentWarning = data.filter((entry) =>
+					entry.media.some((m) => m.mediaId === Number(mediaId)),
+				);
+
+				setContentWarnings(filteredContentWarning);
+				console.log(filteredContentWarning);
+			} catch (error) {
+				console.error("Error fetching horror categories:", error);
+			}
+		};
+		fetchContentWarnings();
+	}, [mediaId]);
 
 	const handleScareRatingChange = async (newScareRating: number) => {
 		if (!watchlistEntryId) return;
@@ -319,57 +354,52 @@ function MediaDetailsPage() {
 						borderColor="brand.border"
 					/>
 
-					<Box mt="40px">
-						<Text
-							color="purple"
-							fontFamily="accentFont"
-							fontSize="2xl"
-							mb="6px">
-							Horror Category
-						</Text>
+					<Select.Root
+						collection={scareRatingCollection}
+						value={scareRating !== null ? [String(scareRating)] : []}
+						onValueChange={(details) => {
+							const nextValue = details.value?.[0];
+							const parsed = Number(nextValue);
 
-						<Flex wrap="wrap" gap="10px">
-							{horrorCategories.map((category) => (
-								<Badge
-									key={category}
-									bg="paleLavender"
-									color="brand.background"
+							if (!Number.isNaN(parsed)) {
+								handleScareRatingChange(parsed);
+							}
+						}}
+						size="sm"
+						width="150px"
+						marginTop="20px">
+						<Select.HiddenSelect />
+
+						<Select.Control bg="navy">
+							<Select.Trigger>
+								<Select.ValueText
 									fontFamily="mainFont"
 									fontWeight="bold"
-									borderRadius="none"
-									px="15px"
-									py="5px">
-									{category}
-								</Badge>
-							))}
-						</Flex>
-					</Box>
-					<Box mt="30px">
-						<Text
-							color="purple"
-							fontFamily="accentFont"
-							fontSize="2xl"
-							mb="6px">
-							Content Warning
-						</Text>
-
-						<Flex wrap="wrap" gap="10px">
-							{contentWarnings.map((warning) => (
-								<Badge
-									key={warning}
-									bg="pink"
-									color="brand.background"
+									color={scareRating !== null ? "green" : "pink"}
+									placeholder="Scare rating"
+								/>
+							</Select.Trigger>
+							<Select.IndicatorGroup>
+								<Select.Indicator />
+							</Select.IndicatorGroup>
+						</Select.Control>
+						<Portal>
+							<Select.Positioner>
+								<Select.Content
+									bg="navy"
+									color="green"
 									fontFamily="mainFont"
-									fontWeight="bold"
-									borderRadius="none"
-									px="15px"
-									py="5px">
-									{warning}
-								</Badge>
-							))}
-						</Flex>
-					</Box>
-
+									fontWeight="bold">
+									{scareRatingCollection.items.map((option) => (
+										<Select.Item item={option.value} key={option.value}>
+											{option.label}
+											<Select.ItemIndicator />
+										</Select.Item>
+									))}
+								</Select.Content>
+							</Select.Positioner>
+						</Portal>
+					</Select.Root>
 					<Box mt="30px">
 						<Text
 							color="purple"
@@ -440,55 +470,23 @@ function MediaDetailsPage() {
 							</Button>
 						)}
 					</Box>
-					<Select.Root
-						collection={scareRatingCollection}
-						value={scareRating !== null ? [String(scareRating)] : []}
-						onValueChange={(details) => {
-							const nextValue = details.value?.[0];
-							const parsed = Number(nextValue);
-
-							if (!Number.isNaN(parsed)) {
-								handleScareRatingChange(parsed);
-							}
-						}}
-						size="sm"
-						width="150px"
-						marginTop="20px">
-						<Select.HiddenSelect />
-
-						<Select.Control bg="navy">
-							<Select.Trigger>
-								<Select.ValueText
-									fontFamily="mainFont"
-									fontWeight="bold"
-									color={scareRating !== null ? "green" : "pink"}
-									placeholder="Scare rating"
-								/>
-							</Select.Trigger>
-							<Select.IndicatorGroup>
-								<Select.Indicator />
-							</Select.IndicatorGroup>
-						</Select.Control>
-						<Portal>
-							<Select.Positioner>
-								<Select.Content
-									bg="navy"
-									color="green"
-									fontFamily="mainFont"
-									fontWeight="bold">
-									{scareRatingCollection.items.map((option) => (
-										<Select.Item item={option.value} key={option.value}>
-											{option.label}
-											<Select.ItemIndicator />
-										</Select.Item>
-									))}
-								</Select.Content>
-							</Select.Positioner>
-						</Portal>
-					</Select.Root>
 				</Box>
 
 				<Box flex="1" minW="0">
+					<Flex align="center" gap="4" mb="20px">
+						<Button
+							bg={isInWatchlist ? "green" : "purple"}
+							color={isInWatchlist ? "navy" : "cream"}
+							border="1px solid"
+							borderColor="paleLavender"
+							_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
+							fontFamily="accentFont"
+							disabled={isInWatchlist}
+							onClick={() => handleAddtoWatchlist(Number(mediaId))}>
+							{isInWatchlist ? "Added" : "Add to Watchlist"}
+						</Button>
+					</Flex>
+
 					<Box width="100%" maxW="800px">
 						<Text
 							fontSize="xl"
@@ -497,28 +495,64 @@ function MediaDetailsPage() {
 							color="paleLavender"
 							fontFamily="mainFont"
 							pr="20px"
-							mt="50px"
+							mt="30px"
 							mb="50px">
 							{mediaDetails.summary}
 						</Text>
-						<Flex align="center" gap="4" mb="20px">
-							<Button
-								bg={isInWatchlist ? "green" : "purple"}
-								color={isInWatchlist ? "navy" : "cream"}
-								border="1px solid"
-								borderColor="paleLavender"
-								_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
-								fontFamily="accentFont"
-								disabled={isInWatchlist}
-								onClick={() => handleAddtoWatchlist(Number(mediaId))}>
-								{isInWatchlist ? "Added" : "Add to Watchlist"}
-							</Button>
-						</Flex>
 
-						<Box color="purple"> Reviews: {reviews.length} </Box>
+						<Box mt="40px">
+							<Text
+								color="purple"
+								fontFamily="accentFont"
+								fontSize="2xl"
+								mb="6px">
+								Horror Category
+							</Text>
+
+							<Flex wrap="wrap" gap="10px">
+								{categories.map((category) => (
+									<Badge
+										key={category.categoryId}
+										bg="paleLavender"
+										color="brand.background"
+										fontFamily="mainFont"
+										fontWeight="bold"
+										borderRadius="none"
+										px="15px"
+										py="5px">
+										{category.categoryName}
+									</Badge>
+								))}
+							</Flex>
+						</Box>
+						<Box mt="30px" mb="70px">
+							<Text
+								color="purple"
+								fontFamily="accentFont"
+								fontSize="2xl"
+								mb="6px">
+								Content Warning
+							</Text>
+
+							<Flex wrap="wrap" gap="10px">
+								{contentWarnings.map((warning) => (
+									<Badge
+										key={warning.warningId}
+										bg="pink"
+										color="brand.background"
+										fontFamily="mainFont"
+										fontWeight="bold"
+										borderRadius="none"
+										px="15px"
+										py="5px">
+										{warning.warningName}
+									</Badge>
+								))}
+							</Flex>
+						</Box>
 
 						<Box
-							mt="250px"
+							mt="50px"
 							border="1px solid"
 							borderColor="paleLavender"
 							bg="navyLight"
