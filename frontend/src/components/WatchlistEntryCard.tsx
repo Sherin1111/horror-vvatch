@@ -29,12 +29,26 @@ interface WatchlistEntryCardProps {
 		watchlistEntryId: number,
 		newStatus: "NOT_WATCHED" | "IN_PROGRESS" | "WATCHED",
 	) => void;
+	onScareRatingChange: (
+		watchlistEntryId: number,
+		newScareRating: number,
+	) => void;
 }
 const statusCollection = createListCollection({
 	items: [
 		{ label: "Not Watched", value: "NOT_WATCHED" },
 		{ label: "In Progress", value: "IN_PROGRESS" },
 		{ label: "Watched", value: "WATCHED" },
+	],
+});
+
+const scareRatingCollection = createListCollection({
+	items: [
+		{ label: "👻", value: "1" },
+		{ label: "👻👻", value: "2" },
+		{ label: "👻👻👻", value: "3" },
+		{ label: "👻👻👻👻", value: "4" },
+		{ label: "👻👻👻👻👻", value: "5" },
 	],
 });
 
@@ -53,6 +67,7 @@ function WatchlistEntryCard({
 	dateAdded,
 	dateCompleted,
 	onStatusChange,
+	onScareRatingChange,
 }: WatchlistEntryCardProps) {
 	const releaseYear = releaseDate?.slice(0, 4) ?? "Unknown";
 	const displayDateAdded = dateAdded?.slice(0, 10) ?? "Unknown";
@@ -127,7 +142,7 @@ function WatchlistEntryCard({
 						<Select.Positioner>
 							<Select.Content
 								bg="navy"
-								color="green"
+								color="purple"
 								fontFamily="mainFont"
 								fontWeight="bold">
 								{statusCollection.items.map((option) => (
@@ -246,9 +261,59 @@ function WatchlistEntryCard({
 							display="flex"
 							flexDirection="column"
 							gap="3">
-							<Text color="purple" fontFamily="accentFont">
-								Scare rating: {scareRating}
-							</Text>
+							<Select.Root
+								collection={scareRatingCollection}
+								marginTop="20px"
+								value={scareRating !== null ? [String(scareRating)] : []}
+								onValueChange={(details) => {
+									const nextValue = details.value?.[0];
+									const newScareRating = Number(nextValue);
+
+									if (
+										!Number.isNaN(newScareRating) &&
+										newScareRating !== scareRating
+									) {
+										onScareRatingChange(watchlistEntryId, newScareRating);
+									}
+								}}
+								size="lg"
+								width="195px">
+								<Select.HiddenSelect />
+
+								<Select.Control bg="navy">
+									<Select.Trigger>
+										<Select.ValueText
+											fontFamily="mainFont"
+											fontWeight="bold"
+											color="pink"
+											placeholder="Select scare rating"
+										/>
+									</Select.Trigger>
+									<Select.IndicatorGroup>
+										<Select.Indicator />
+									</Select.IndicatorGroup>
+								</Select.Control>
+
+								<Portal>
+									<Select.Positioner>
+										<Select.Content
+											bg="navy"
+											color="green"
+											fontFamily="mainFont"
+											fontWeight="bold">
+											{scareRatingCollection.items.map((option) => (
+												<Select.Item
+													item={String(option.value)}
+													key={option.value}>
+													{option.label}
+													<Select.ItemIndicator />
+												</Select.Item>
+											))}
+										</Select.Content>
+									</Select.Positioner>
+								</Portal>
+							</Select.Root>
+
 							<Button
 								bg="purple"
 								fontFamily="mainFont"

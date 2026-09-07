@@ -10,10 +10,23 @@ import {
 	Flex,
 	Heading,
 	Image,
+	Portal,
+	Select,
 	Text,
 	Textarea,
 	VStack,
+	createListCollection,
 } from "@chakra-ui/react";
+
+const scareRatingCollection = createListCollection({
+	items: [
+		{ label: "👻", value: "1" },
+		{ label: "👻👻", value: "2" },
+		{ label: "👻👻👻", value: "3" },
+		{ label: "👻👻👻👻", value: "4" },
+		{ label: "👻👻👻👻👻", value: "5" },
+	],
+});
 
 const currentUser = {
 	userId: 1,
@@ -59,6 +72,8 @@ function MediaDetailsPage() {
 	const { mediaId } = useParams<{ mediaId: string }>();
 	const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
 	const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
+	const [watchlistEntryId, setWatchlistEntryId] = useState<number | null>(null);
+	const [scareRating, setScareRating] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (!mediaId) return;
@@ -83,7 +98,7 @@ function MediaDetailsPage() {
 	}, [mediaId]);
 
 	useEffect(() => {
-		const fetchWatchlistId = async () => {
+		const fetchWatchlistIds = async () => {
 			try {
 				const response = await fetch(
 					`http://localhost:8080/api/watchlist/users/${currentUser.userId}`,
@@ -94,17 +109,29 @@ function MediaDetailsPage() {
 
 				const data: WatchlistEntry[] = await response.json();
 
-				const id = data
-					.filter((entry) => entry.media?.mediaId)
+				const ids = data
+					.filter((entry) => entry.media?.mediaId !== undefined)
 					.map((entry) => entry.media.mediaId);
 
-				setWatchlistIds(id);
+				setWatchlistIds(ids);
+
+				const currentEntry = data.find(
+					(entry) => entry.media?.mediaId === Number(mediaId),
+				);
+
+				if (currentEntry) {
+					setWatchlistEntryId(currentEntry.watchlistEntryId);
+					setScareRating(currentEntry.scareRating);
+				} else {
+					setWatchlistEntryId(null);
+					setScareRating(null);
+				}
 			} catch (error) {
 				console.error("Error fetching added watchlist", error);
 			}
 		};
-		fetchWatchlistId();
-	}, []);
+		fetchWatchlistIds();
+	}, [mediaId]);
 
 	const handleAddtoWatchlist = async (mediaIdToAdd: number) => {
 		try {
@@ -122,11 +149,40 @@ function MediaDetailsPage() {
 				throw new Error("Failed to add to watchlist");
 			}
 
+			const newEntry: WatchlistEntry = await response.json();
+
 			setWatchlistIds((prev) =>
 				prev.includes(mediaIdToAdd) ? prev : [...prev, mediaIdToAdd],
 			);
+			setWatchlistEntryId(newEntry.watchlistEntryId);
+			setScareRating(newEntry.scareRating);
 		} catch (error) {
 			console.error("Error adding to watchlist:", error);
+		}
+	};
+
+	const handleScareRatingChange = async (newScareRating: number) => {
+		if (!watchlistEntryId) return;
+
+		try {
+			const response = await fetch(
+				`http://localhost:8080/api/watchlist/${watchlistEntryId}/scare-rating`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newScareRating),
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to update scare rating");
+			}
+
+			setScareRating(newScareRating);
+		} catch (error) {
+			console.error("Error updating scare rating:", error);
 		}
 	};
 
@@ -272,6 +328,52 @@ function MediaDetailsPage() {
 							_placeholder={{ color: "paleLavender" }}
 						/>
 					</Box>
+					<Select.Root
+						collection={scareRatingCollection}
+						value={scareRating !== null ? [String(scareRating)] : []}
+						onValueChange={(details) => {
+							const nextValue = details.value?.[0];
+							const parsed = Number(nextValue);
+
+							if (!Number.isNaN(parsed)) {
+								handleScareRatingChange(parsed);
+							}
+						}}
+						size="sm"
+						width="150px"
+						marginTop="20px">
+						<Select.HiddenSelect />
+
+						<Select.Control bg="navy">
+							<Select.Trigger>
+								<Select.ValueText
+									fontFamily="mainFont"
+									fontWeight="bold"
+									color={scareRating !== null ? "green" : "pink"}
+									placeholder="Scare rating"
+								/>
+							</Select.Trigger>
+							<Select.IndicatorGroup>
+								<Select.Indicator />
+							</Select.IndicatorGroup>
+						</Select.Control>
+						<Portal>
+							<Select.Positioner>
+								<Select.Content
+									bg="navy"
+									color="green"
+									fontFamily="mainFont"
+									fontWeight="bold">
+									{scareRatingCollection.items.map((option) => (
+										<Select.Item item={option.value} key={option.value}>
+											{option.label}
+											<Select.ItemIndicator />
+										</Select.Item>
+									))}
+								</Select.Content>
+							</Select.Positioner>
+						</Portal>
+					</Select.Root>
 				</Box>
 
 				<Box flex="1" minW="0">
@@ -288,18 +390,19 @@ function MediaDetailsPage() {
 							{mediaDetails.summary}
 						</Text>
 
-						<Button
-							mb="20px"
-							bg={isInWatchlist ? "green" : "purple"}
-							color={isInWatchlist ? "navy" : "cream"}
-							border="1px solid"
-							borderColor="paleLavender"
-							_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
-							fontFamily="accentFont"
-							disabled={isInWatchlist}
-							onClick={() => handleAddtoWatchlist(Number(mediaId))}>
-							{isInWatchlist ? "Added" : "Add to Watchlist"}
-						</Button>
+						<Flex align="center" gap="4" mb="20px">
+							<Button
+								bg={isInWatchlist ? "green" : "purple"}
+								color={isInWatchlist ? "navy" : "cream"}
+								border="1px solid"
+								borderColor="paleLavender"
+								_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
+								fontFamily="accentFont"
+								disabled={isInWatchlist}
+								onClick={() => handleAddtoWatchlist(Number(mediaId))}>
+								{isInWatchlist ? "Added" : "Add to Watchlist"}
+							</Button>
+						</Flex>
 
 						<Box
 							mt="250px"

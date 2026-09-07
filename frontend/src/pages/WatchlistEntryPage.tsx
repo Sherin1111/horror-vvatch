@@ -57,6 +57,37 @@ function WatchlistEntryPage() {
 		}
 	};
 
+	const handleScareRatingChange = async (
+		watchlistEntryId: number,
+		newScareRating: number,
+	) => {
+		try {
+			const response = await fetch(
+				`http://localhost:8080/api/watchlist/${watchlistEntryId}/scare-rating`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newScareRating),
+				},
+			);
+			if (!response.ok) {
+				throw new Error("Failed to update scare rating");
+			}
+
+			const updatedEntry: WatchlistEntry = await response.json();
+
+			setUserWatchlist((previousWatchlist) =>
+				previousWatchlist.map((entry) =>
+					entry.watchlistEntryId === watchlistEntryId ? updatedEntry : entry,
+				),
+			);
+		} catch (error) {
+			console.error("Failed to update scare rating", error);
+		}
+	};
+
 	return (
 		<>
 			<Center>
@@ -95,6 +126,7 @@ function WatchlistEntryPage() {
 									dateAdded={item.dateAdded}
 									dateCompleted={item.dateCompleted}
 									onStatusChange={handleStatusChange}
+									onScareRatingChange={handleScareRatingChange}
 								/>
 							</Box>
 						))
