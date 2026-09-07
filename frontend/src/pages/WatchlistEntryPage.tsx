@@ -26,6 +26,37 @@ function WatchlistEntryPage() {
 		fetchUserWatchlist();
 	}, [userId]);
 
+	const handleStatusChange = async (
+		watchlistEntryId: number,
+		newStatus: "NOT_WATCHED" | "IN_PROGRESS" | "WATCHED",
+	) => {
+		try {
+			const response = await fetch(
+				`http://localhost:8080/api/watchlist/${watchlistEntryId}/status`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newStatus),
+				},
+			);
+			if (!response.ok) {
+				throw new Error("Failed to update watchlist status");
+			}
+
+			const updatedEntry: WatchlistEntry = await response.json();
+
+			setUserWatchlist((previousWatchlist) =>
+				previousWatchlist.map((entry) =>
+					entry.watchlistEntryId === watchlistEntryId ? updatedEntry : entry,
+				),
+			);
+		} catch (error) {
+			console.error("Failed to update watchlist status", error);
+		}
+	};
+
 	return (
 		<>
 			<Center>
@@ -58,10 +89,12 @@ function WatchlistEntryPage() {
 									runtimeMinutes={item.media.runtimeMinutes}
 									numberOfSeasons={item.media.numberOfSeasons}
 									numberOfEpisodes={item.media.numberOfEpisodes}
+									watchlistEntryId={item.watchlistEntryId}
 									watchStatus={item.watchStatus}
 									scareRating={item.scareRating}
 									dateAdded={item.dateAdded}
 									dateCompleted={item.dateCompleted}
+									onStatusChange={handleStatusChange}
 								/>
 							</Box>
 						))

@@ -1,4 +1,15 @@
-import { Badge, Box, Button, Card, Flex, Image, Text } from "@chakra-ui/react";
+import {
+	Badge,
+	Box,
+	Button,
+	Card,
+	Flex,
+	Image,
+	Portal,
+	Select,
+	Text,
+	createListCollection,
+} from "@chakra-ui/react";
 
 interface WatchlistEntryCardProps {
 	title: string;
@@ -9,11 +20,23 @@ interface WatchlistEntryCardProps {
 	runtimeMinutes: number | null;
 	numberOfSeasons: number | null;
 	numberOfEpisodes: number | null;
+	watchlistEntryId: number;
 	watchStatus: "NOT_WATCHED" | "IN_PROGRESS" | "WATCHED";
 	scareRating: number | null;
 	dateAdded: string | null;
 	dateCompleted: string | null;
+	onStatusChange: (
+		watchlistEntryId: number,
+		newStatus: "NOT_WATCHED" | "IN_PROGRESS" | "WATCHED",
+	) => void;
 }
+const statusCollection = createListCollection({
+	items: [
+		{ label: "Not Watched", value: "NOT_WATCHED" },
+		{ label: "In Progress", value: "IN_PROGRESS" },
+		{ label: "Watched", value: "WATCHED" },
+	],
+});
 
 function WatchlistEntryCard({
 	title,
@@ -24,25 +47,21 @@ function WatchlistEntryCard({
 	runtimeMinutes,
 	numberOfSeasons,
 	numberOfEpisodes,
+	watchlistEntryId,
 	watchStatus,
 	scareRating,
 	dateAdded,
 	dateCompleted,
+	onStatusChange,
 }: WatchlistEntryCardProps) {
 	const releaseYear = releaseDate?.slice(0, 4) ?? "Unknown";
 	const displayDateAdded = dateAdded?.slice(0, 10) ?? "Unknown";
-	const displayDateCompleted = dateCompleted?.slice(0, 10) ?? "Unknown";
+	const displayDateCompleted = dateCompleted?.slice(0, 10) ?? "Pending";
 	const displayMediaType = mediaType === "TV_SHOW" ? "TV SHOW" : "MOVIE";
 	const mediaInfo =
 		mediaType === "MOVIE"
 			? `${runtimeMinutes} min`
 			: ` Seasons: ${numberOfSeasons} ` + `Episodes: ${numberOfEpisodes}`;
-	const displayWatchStatus =
-		watchStatus === "NOT_WATCHED"
-			? "NOT WATCHED"
-			: watchStatus === "IN_PROGRESS"
-				? "IN PROGRESS"
-				: "WATCHED";
 
 	return (
 		<Card.Root
@@ -64,13 +83,63 @@ function WatchlistEntryCard({
 					src={posterPath ?? undefined}
 					alt={title ?? "Movie poster"}
 				/>
-				<Text
-					marginTop="12px"
-					fontFamily="mainFont"
-					color="purple"
-					fontWeight="bold">
-					<Text color="green">{displayWatchStatus}</Text>
-				</Text>
+
+				<Select.Root
+					collection={statusCollection}
+					marginTop="20px"
+					value={[watchStatus]}
+					onValueChange={(details) => {
+						const newStatus = details.value?.[0] as
+							| "NOT_WATCHED"
+							| "IN_PROGRESS"
+							| "WATCHED"
+							| undefined;
+
+						if (newStatus && newStatus !== watchStatus) {
+							onStatusChange(watchlistEntryId, newStatus);
+						}
+					}}
+					size="lg"
+					width="150px">
+					<Select.HiddenSelect />
+
+					<Select.Control bg="navy">
+						<Select.Trigger>
+							<Select.ValueText
+								fontFamily="mainFont"
+								fontWeight="bold"
+								color={
+									watchStatus === "NOT_WATCHED"
+										? "pink"
+										: watchStatus === "WATCHED"
+											? "green"
+											: "yellow"
+								}
+								placeholder="Select watch status"
+							/>
+						</Select.Trigger>
+						<Select.IndicatorGroup>
+							<Select.Indicator />
+						</Select.IndicatorGroup>
+					</Select.Control>
+
+					<Portal>
+						<Select.Positioner>
+							<Select.Content
+								bg="navy"
+								color="green"
+								fontFamily="mainFont"
+								fontWeight="bold">
+								{statusCollection.items.map((option) => (
+									<Select.Item item={option.value} key={option.value}>
+										{option.label}
+										<Select.ItemIndicator />
+									</Select.Item>
+								))}
+							</Select.Content>
+						</Select.Positioner>
+					</Portal>
+				</Select.Root>
 			</Box>
 			<Box>
 				<Card.Body>
