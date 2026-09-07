@@ -1,12 +1,19 @@
 import MediaCard from "@/components/MediaCard";
 import SearchBar from "@/components/SearchBar";
 import type { Media } from "@/types/media";
+import type { WatchlistEntry } from "@/types/watchlist";
 import { Center, Grid, GridItem, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+
+const currentUser = {
+	userId: 1,
+	username: "demoUser",
+};
 
 function HomePage() {
 	const [mediaList, setMediaList] = useState<Media[]>([]);
 	const [searchMedia, setSearchMedia] = useState("");
+	const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
 
 	const filterSearch = async () => {
 		try {
@@ -40,6 +47,51 @@ function HomePage() {
 		fetchMedia();
 	}, []);
 
+	useEffect(() => {
+		const fetchWatchlistIds = async () => {
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/watchlist/users/${currentUser.userId}`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch added watchlist ID's");
+				}
+
+				const data: WatchlistEntry[] = await response.json();
+
+				const ids = data.map((entry) => entry.media.mediaId);
+				setWatchlistIds(ids);
+			} catch (error) {
+				console.error("Error fetching added watchlist ID's", error);
+			}
+		};
+		fetchWatchlistIds();
+	}, []);
+
+	const handleAddtoWatchlist = async (mediaId: number, userId: number) => {
+		try {
+			const response = await fetch(
+				`http://localhost:8080/api/watchlist/users/${userId}/media/${mediaId}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to add to watchlist");
+			}
+
+			setWatchlistIds((prev) =>
+				prev.includes(mediaId) ? prev : [...prev, mediaId],
+			);
+		} catch (error) {
+			console.error("Error adding to watchlist:", error);
+		}
+	};
+
 	return (
 		<>
 			<Center>
@@ -68,16 +120,25 @@ function HomePage() {
 				gap="6"
 				padding="10">
 				{mediaList.length > 0
-					? mediaList.map((item) => (
-							<GridItem key={item.mediaId}>
-								<MediaCard
-									posterPath={item.posterPath}
-									title={item.title}
-									mediaType={item.mediaType}
-									releaseDate={item.releaseDate}
-								/>
-							</GridItem>
-						))
+					? mediaList.map((item) => {
+							const isInWatchlist = watchlistIds.includes(item.mediaId);
+
+							return (
+								<GridItem key={item.mediaId}>
+									<MediaCard
+										mediaId={item.mediaId}
+										posterPath={item.posterPath}
+										title={item.title}
+										mediaType={item.mediaType}
+										releaseDate={item.releaseDate}
+										isInWatchlist={isInWatchlist}
+										onAddToWatchlist={() =>
+											handleAddtoWatchlist(item.mediaId, currentUser.userId)
+										}
+									/>
+								</GridItem>
+							);
+						})
 					: "Unable to load media. Please try again."}
 			</Grid>
 		</>

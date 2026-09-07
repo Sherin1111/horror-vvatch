@@ -24,8 +24,8 @@ function Navbar() {
 					<ChakraLink fontFamily="mainFont" color="paleLavender">
 						Search
 					</ChakraLink>
-					<ChakraLink fontFamily="mainFont" color="paleLavender">
-						Watchlist
+					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
+						<RouterLink to="/watchlist/users/:userId">Watchlist</RouterLink>
 					</ChakraLink>
 					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
 						<RouterLink to="/login">Login</RouterLink>

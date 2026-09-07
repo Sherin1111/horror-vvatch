@@ -30,7 +30,8 @@ function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
 				onClick={onSearch}
 				bg="purple"
 				border="1px solid"
-				borderColor="navyLight">
+				borderColor="paleLavender"
+				_hover={{ bg: "pink" }}>
 				Search
 			</Button>
 		</Center>

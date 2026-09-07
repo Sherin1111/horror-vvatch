@@ -101,6 +101,10 @@ function RegistrationForm({
 								value={username}
 								onChange={(event) => onUsernameChange(event.target.value)}
 								name="username"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.username}</Field.ErrorText>
 						</Field.Root>
@@ -116,6 +120,10 @@ function RegistrationForm({
 								value={firstName}
 								onChange={(event) => onFirstNameChange(event.target.value)}
 								name="firstName"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.firstName}</Field.ErrorText>
 						</Field.Root>
@@ -131,6 +139,10 @@ function RegistrationForm({
 								value={lastName}
 								onChange={(event) => onLastNameChange(event.target.value)}
 								name="lastName"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.lastName}</Field.ErrorText>
 						</Field.Root>
@@ -146,6 +158,10 @@ function RegistrationForm({
 								value={email}
 								onChange={(event) => onEmailChange(event.target.value)}
 								name="email"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.email}</Field.ErrorText>
 						</Field.Root>
@@ -161,6 +177,10 @@ function RegistrationForm({
 								value={password}
 								onChange={(event) => onPasswordChange(event.target.value)}
 								name="password"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.password}</Field.ErrorText>
 						</Field.Root>

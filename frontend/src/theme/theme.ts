@@ -8,10 +8,10 @@ const customConfig = defineConfig({
 					value: "#0B0D1A",
 				},
 				navyLight: {
-					value: "#202545",
+					value: "#19193d",
 				},
 				purple: {
-					value: "#7b4db0",
+					value: "#A08FF9",
 				},
 				purpleBright: {
 					value: "#cc9fffde",
@@ -23,7 +23,7 @@ const customConfig = defineConfig({
 					value: "#39FF14",
 				},
 				pink: {
-					value: "#FF2DAA",
+					value: "#E770E2",
 				},
 				cream: {
 					value: "#E8E5DF",

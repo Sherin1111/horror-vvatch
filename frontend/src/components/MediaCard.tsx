@@ -1,22 +1,30 @@
 import { Badge, Button, Card, Image, Text } from "@chakra-ui/react";
+import type React from "react";
 
 interface MediaCardProps {
+	mediaId: number;
 	title: string;
 	mediaType: "MOVIE" | "TV_SHOW";
 	posterPath: string | null;
 	releaseDate: string | null;
+	isInWatchlist?: boolean;
+	onAddToWatchlist: (mediaId: number) => void;
+	children?: React.ReactNode;
 }
 
 function MediaCard({
+	mediaId,
 	title,
 	mediaType,
 	posterPath,
-
 	releaseDate,
+	isInWatchlist = false,
+	onAddToWatchlist,
 }: MediaCardProps) {
 	const posterImage = posterPath ?? "No Media poster available";
 	const releaseYear = releaseDate?.slice(0, 4) ?? "Unknown";
 	const displayMediaType = mediaType === "TV_SHOW" ? " TV SHOW" : "MOVIE";
+
 	return (
 		<Card.Root>
 			<Image
@@ -27,7 +35,7 @@ function MediaCard({
 				alt={title || "Media poster"}
 			/>
 			<Card.Body bg="navyLight">
-				<Card.Title fontSize="md" color="paleLavender" fontFamily="accentFont">
+				<Card.Title fontSize="md" color="pink" fontFamily="accentFont">
 					{title}{" "}
 					<Text
 						as="span"
@@ -35,23 +43,32 @@ function MediaCard({
 						fontSize="sm"
 						fontFamily="mainFont"
 						color="cream">
-						{releaseYear}
+						{releaseYear}{" "}
+					</Text>
+					<Text as="span" marginLeft="2" color="cream" fontFamily="mainFont">
+						<Badge
+							color="green"
+							variant="outline"
+							border="1px solid"
+							borderColor="purple"
+							background="transparent">
+							{displayMediaType}
+						</Badge>
 					</Text>
 				</Card.Title>
-				<Text color="cream" fontFamily="mainFont">
-					<Badge
-						color="green"
-						variant="outline"
-						border="1px solid"
-						borderColor="purple"
-						background="transparent">
-						{displayMediaType}
-					</Badge>
-				</Text>
 			</Card.Body>
 			<Card.Footer bg="navyLight">
-				<Button fontFamily="accentFont" bg="purple">
-					Add to Watchlist
+				<Button
+					fontFamily="accentFont"
+					fontWeight="bold"
+					bg={isInWatchlist ? "green" : "purple"}
+					color={isInWatchlist ? "navy" : "cream"}
+					border="1px solid"
+					borderColor="paleLavender"
+					_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
+					disabled={isInWatchlist}
+					onClick={() => onAddToWatchlist(mediaId)}>
+					{isInWatchlist ? "Added" : "Add to Watchlist"}
 				</Button>
 			</Card.Footer>
 		</Card.Root>

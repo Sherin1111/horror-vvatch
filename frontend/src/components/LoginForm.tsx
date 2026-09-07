@@ -67,6 +67,10 @@ function LoginForm({
 								value={email}
 								onChange={(event) => onEmailChange(event.target.value)}
 								name="email"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.email}</Field.ErrorText>
 						</Field.Root>
@@ -82,6 +86,10 @@ function LoginForm({
 								value={password}
 								onChange={(event) => onPasswordChange(event.target.value)}
 								name="password"
+								border="1px solid"
+								borderColor="purple"
+								color="paleLavender"
+								css={{ "--focus-color": "lime" }}
 							/>
 							<Field.ErrorText>{errors.password}</Field.ErrorText>
 						</Field.Root>
