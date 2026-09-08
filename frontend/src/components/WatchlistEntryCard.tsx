@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "react-router-dom";
 import type { Category } from "@/types/category";
 import type { ContentWarning } from "@/types/contentWarning";
 import {
@@ -27,6 +28,7 @@ interface WatchlistEntryCardProps {
 	scareRating: number | null;
 	dateAdded: string | null;
 	dateCompleted: string | null;
+	mediaId: number;
 	categories: Category[];
 	contentWarnings: ContentWarning[];
 	onStatusChange: (
@@ -71,6 +73,7 @@ function WatchlistEntryCard({
 	scareRating,
 	dateAdded,
 	dateCompleted,
+	mediaId,
 	categories,
 	contentWarnings,
 	onStatusChange,
@@ -100,13 +103,14 @@ function WatchlistEntryCard({
 				flexDirection="column"
 				alignItems="center"
 				margin="30px">
-				<Image
-					aspectRatio="2 / 3"
-					width="350px"
-					src={posterPath ?? undefined}
-					alt={title ?? "Movie poster"}
-				/>
-
+				<RouterLink to={`/media/${mediaId}`}>
+					<Image
+						aspectRatio="2 / 3"
+						width="350px"
+						src={posterPath ?? undefined}
+						alt={title ?? "Movie poster"}
+					/>
+				</RouterLink>
 				<Select.Root
 					collection={statusCollection}
 					marginTop="20px"
@@ -166,9 +170,11 @@ function WatchlistEntryCard({
 			</Box>
 			<Box>
 				<Card.Body>
-					<Card.Title fontSize="xl" color="purple" fontFamily="accentFont">
-						{title}
-					</Card.Title>
+					<RouterLink to={`/media/${mediaId}`}>
+						<Card.Title fontSize="xl" color="purple" fontFamily="accentFont">
+							{title}
+						</Card.Title>
+					</RouterLink>
 					<Text color="cream" fontFamily="mainFont">
 						<Badge
 							color="green"

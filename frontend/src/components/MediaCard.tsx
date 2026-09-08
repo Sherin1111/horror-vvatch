@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "react-router-dom";
 import { Badge, Button, Card, Image, Text } from "@chakra-ui/react";
 import type React from "react";
 
@@ -27,35 +28,40 @@ function MediaCard({
 
 	return (
 		<Card.Root>
-			<Image
-				aspectRatio="2 / 3"
-				width="100%"
-				objectFit="cover"
-				src={posterImage}
-				alt={title || "Media poster"}
-			/>
+			<RouterLink to={`/media/${mediaId}`}>
+				<Image
+					aspectRatio="2 / 3"
+					width="100%"
+					objectFit="cover"
+					src={posterImage}
+					alt={title || "Media poster"}
+				/>
+			</RouterLink>
+
 			<Card.Body bg="navyLight">
-				<Card.Title fontSize="md" color="pink" fontFamily="accentFont">
-					{title}{" "}
-					<Text
-						as="span"
-						marginLeft="2"
-						fontSize="sm"
-						fontFamily="mainFont"
-						color="cream">
-						{releaseYear}{" "}
-					</Text>
-					<Text as="span" marginLeft="2" color="cream" fontFamily="mainFont">
-						<Badge
-							color="green"
-							variant="outline"
-							border="1px solid"
-							borderColor="purple"
-							background="transparent">
-							{displayMediaType}
-						</Badge>
-					</Text>
-				</Card.Title>
+				<RouterLink to={`/media/${mediaId}`}>
+					<Card.Title fontSize="md" color="pink" fontFamily="accentFont">
+						{title}{" "}
+						<Text
+							as="span"
+							marginLeft="2"
+							fontSize="sm"
+							fontFamily="mainFont"
+							color="cream">
+							{releaseYear}{" "}
+						</Text>
+						<Text as="span" marginLeft="2" color="cream" fontFamily="mainFont">
+							<Badge
+								color="green"
+								variant="outline"
+								border="1px solid"
+								borderColor="purple"
+								background="transparent">
+								{displayMediaType}
+							</Badge>
+						</Text>
+					</Card.Title>
+				</RouterLink>
 			</Card.Body>
 			<Card.Footer bg="navyLight">
 				<Button

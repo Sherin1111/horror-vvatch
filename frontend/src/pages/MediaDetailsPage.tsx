@@ -145,12 +145,35 @@ function MediaDetailsPage() {
 				);
 
 				setCategories(filteredCategories);
-				console.log(filteredCategories);
 			} catch (error) {
 				console.error("Error fetching horror categories:", error);
 			}
 		};
 		fetchCategories();
+	}, [mediaId]);
+
+	useEffect(() => {
+		const fetchContentWarnings = async () => {
+			try {
+				const response = await fetch(
+					`http://localhost:8080/api/content-warnings`,
+				);
+				if (!response.ok) {
+					throw new Error("Failed to fetch content warnings");
+				}
+
+				const data: ContentWarning[] = await response.json();
+
+				const filteredContentWarning = data.filter((entry) =>
+					entry.media.some((m) => m.mediaId === Number(mediaId)),
+				);
+
+				setContentWarnings(filteredContentWarning);
+			} catch (error) {
+				console.error("Error fetching content warnings:", error);
+			}
+		};
+		fetchContentWarnings();
 	}, [mediaId]);
 
 	const handleAddtoWatchlist = async (mediaIdToAdd: number) => {
@@ -180,31 +203,6 @@ function MediaDetailsPage() {
 			console.error("Error adding to watchlist:", error);
 		}
 	};
-
-	useEffect(() => {
-		const fetchContentWarnings = async () => {
-			try {
-				const response = await fetch(
-					`http://localhost:8080/api/content-warnings`,
-				);
-				if (!response.ok) {
-					throw new Error("Failed to fetch horror categories");
-				}
-
-				const data: ContentWarning[] = await response.json();
-
-				const filteredContentWarning = data.filter((entry) =>
-					entry.media.some((m) => m.mediaId === Number(mediaId)),
-				);
-
-				setContentWarnings(filteredContentWarning);
-				console.log(filteredContentWarning);
-			} catch (error) {
-				console.error("Error fetching horror categories:", error);
-			}
-		};
-		fetchContentWarnings();
-	}, [mediaId]);
 
 	const handleScareRatingChange = async (newScareRating: number) => {
 		if (!watchlistEntryId) return;

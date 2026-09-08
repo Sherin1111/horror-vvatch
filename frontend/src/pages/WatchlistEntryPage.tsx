@@ -207,6 +207,7 @@ function WatchlistEntryPage() {
 										scareRating={entry.scareRating}
 										dateAdded={entry.dateAdded}
 										dateCompleted={entry.dateCompleted}
+										mediaId={entry.media.mediaId}
 										onStatusChange={handleStatusChange}
 										onDelete={handleDeleteEntry}
 										onScareRatingChange={handleScareRatingChange}
