@@ -1,7 +1,17 @@
-import { HStack, Flex, Box, Text, Link as ChakraLink } from "@chakra-ui/react";
+import { useAuth } from "@/context/AuthContext";
+import {
+	HStack,
+	Flex,
+	Box,
+	Text,
+	Link as ChakraLink,
+	Button,
+} from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
 function Navbar() {
+	const { user, logout } = useAuth();
+
 	return (
 		<Flex bg="navyLight" as="nav" align="center" justify="space-between">
 			<Box>
@@ -18,25 +28,41 @@ function Navbar() {
 					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
 						<RouterLink to="/">Home </RouterLink>
 					</ChakraLink>
-					<ChakraLink fontFamily="mainFont" color="paleLavender">
-						Browse
+					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
+						<RouterLink to="/browse">Browse</RouterLink>
 					</ChakraLink>
-					<ChakraLink fontFamily="mainFont" color="paleLavender">
-						Search
-					</ChakraLink>
+
 					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
 						<RouterLink to="/watchlist/users/:userId">Watchlist</RouterLink>
 					</ChakraLink>
-					<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
-						<RouterLink to="/login">Login</RouterLink>
-					</ChakraLink>
-					<ChakraLink
-						asChild
-						fontFamily="mainFont"
-						color="paleLavender"
-						paddingRight="20px">
-						<RouterLink to="/registration">Sign up </RouterLink>
-					</ChakraLink>
+					{user ? (
+						<>
+							<Text color="pink" fontFamily="mainFont" fontWeight="bold">
+								Welcome, {user.username}
+							</Text>
+							<Button
+								fontFamily="accentFont"
+								fontWeight="bold"
+								bg="purple"
+								_hover={{ bg: "pink" }}
+								onClick={logout}>
+								Logout
+							</Button>
+						</>
+					) : (
+						<>
+							<ChakraLink asChild fontFamily="mainFont" color="paleLavender">
+								<RouterLink to="/login">Login</RouterLink>
+							</ChakraLink>
+							<ChakraLink
+								asChild
+								fontFamily="mainFont"
+								color="paleLavender"
+								paddingRight="20px">
+								<RouterLink to="/registration">Sign up </RouterLink>
+							</ChakraLink>
+						</>
+					)}
 				</HStack>
 			</Box>
 		</Flex>

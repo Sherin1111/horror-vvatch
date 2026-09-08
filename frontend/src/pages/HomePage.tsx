@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import MediaCard from "@/components/MediaCard";
 import SearchBar from "@/components/SearchBar";
 import type { Media } from "@/types/media";
@@ -5,31 +6,12 @@ import type { WatchlistEntry } from "@/types/watchlist";
 import { Center, Grid, GridItem, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-const currentUser = {
-	userId: 1,
-	username: "demoUser",
-};
-
 function HomePage() {
+	const { user } = useAuth();
+
 	const [mediaList, setMediaList] = useState<Media[]>([]);
 	const [searchMedia, setSearchMedia] = useState("");
 	const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
-
-	const filterSearch = async () => {
-		try {
-			const response = await fetch(
-				`http://localhost:8080/api/media/search?title=${encodeURIComponent(searchMedia)}`,
-			);
-			if (!response.ok) {
-				throw new Error("Search failed");
-			}
-
-			const data: Media[] = await response.json();
-			setMediaList(data);
-		} catch (error) {
-			console.error("Search failed:", error);
-		}
-	};
 
 	useEffect(() => {
 		const fetchMedia = async () => {
@@ -49,9 +31,11 @@ function HomePage() {
 
 	useEffect(() => {
 		const fetchWatchlistIds = async () => {
+			if (!user?.userId) return;
+
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/watchlist/users/${currentUser.userId}`,
+					`http://localhost:8080/api/watchlist/users/${user.userId}`,
 				);
 				if (!response.ok) {
 					throw new Error("Failed to fetch added watchlist ID's");
@@ -66,9 +50,11 @@ function HomePage() {
 			}
 		};
 		fetchWatchlistIds();
-	}, []);
+	}, [user?.userId]);
 
-	const handleAddtoWatchlist = async (mediaId: number, userId: number) => {
+	const handleAddtoWatchlist = async (mediaId: number, userId?: number) => {
+		if (!userId) return;
+
 		try {
 			const response = await fetch(
 				`http://localhost:8080/api/watchlist/users/${userId}/media/${mediaId}`,
@@ -92,6 +78,10 @@ function HomePage() {
 		}
 	};
 
+	const filteredMedia = mediaList.filter((media) =>
+		media.title.toLowerCase().includes(searchMedia.toLowerCase()),
+	);
+
 	return (
 		<>
 			<Center>
@@ -107,8 +97,7 @@ function HomePage() {
 
 			<SearchBar
 				value={searchMedia}
-				onChange={setSearchMedia}
-				onSearch={filterSearch}
+				onChange={(value) => setSearchMedia(value)}
 			/>
 
 			<Grid
@@ -119,8 +108,8 @@ function HomePage() {
 				}}
 				gap="6"
 				padding="10">
-				{mediaList.length > 0
-					? mediaList.map((item) => {
+				{filteredMedia.length > 0
+					? filteredMedia.map((item) => {
 							const isInWatchlist = watchlistIds.includes(item.mediaId);
 
 							return (
@@ -133,7 +122,7 @@ function HomePage() {
 										releaseDate={item.releaseDate}
 										isInWatchlist={isInWatchlist}
 										onAddToWatchlist={() =>
-											handleAddtoWatchlist(item.mediaId, currentUser.userId)
+											handleAddtoWatchlist(item.mediaId, user?.userId)
 										}
 									/>
 								</GridItem>

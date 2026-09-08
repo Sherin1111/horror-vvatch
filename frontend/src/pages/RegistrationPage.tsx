@@ -1,8 +1,13 @@
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import RegistrationForm from "../components/RegistrationForm";
 import { Center, Heading } from "@chakra-ui/react";
 
 function RegistrationPage() {
+	const { login } = useAuth();
+	const navigate = useNavigate();
+
 	const [username, setUsername] = useState<string>("");
 	const [firstName, setFirstName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
@@ -26,6 +31,11 @@ function RegistrationPage() {
 				}),
 			});
 			if (response.ok) {
+				const user = await response.json();
+
+				login(user);
+				navigate(`/watchlist/users/${user.userId}`);
+
 				setRegistrationMessage("Registration successful");
 			} else if (response.status === 400) {
 				const errorData = await response.json();

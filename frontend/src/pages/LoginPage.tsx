@@ -1,8 +1,14 @@
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 import LoginForm from "../components/LoginForm";
 import { Box, Center, Heading } from "@chakra-ui/react";
 
 function LoginPage() {
+	const navigate = useNavigate();
+
+	const { login } = useAuth();
+
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [loginMessage, setLoginMessage] = useState<string>("");
@@ -20,6 +26,9 @@ function LoginPage() {
 				}),
 			});
 			if (response.ok) {
+				const user = await response.json();
+				login(user);
+				navigate(`/watchlist/users/${user.userId}`);
 				setLoginMessage("Login successful");
 			} else if (response.status === 401) {
 				setLoginMessage("Invalid email or password");

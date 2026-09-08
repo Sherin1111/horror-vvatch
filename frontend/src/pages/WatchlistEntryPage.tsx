@@ -1,4 +1,6 @@
-import { Box, Center, Flex, Heading, Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { Box, Button, Center, Flex, Heading, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import type { WatchlistEntry } from "@/types/watchlist";
 import type { Category } from "@/types/category";
@@ -6,11 +8,14 @@ import type { ContentWarning } from "@/types/contentWarning";
 import WatchlistEntryCard from "@/components/WatchlistEntryCard";
 
 function WatchlistEntryPage() {
-	const userId = 1;
+	const navigate = useNavigate();
+
+	const { user } = useAuth();
+	const userId = user?.userId;
+
 	const [userWatchlist, setUserWatchlist] = useState<WatchlistEntry[]>([]);
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [contentWarnings, setContentWarnings] = useState<ContentWarning[]>([]);
-	const pageUsername = userWatchlist[0]?.user.username ?? "User";
 
 	useEffect(() => {
 		const fetchUserWatchlist = async () => {
@@ -27,6 +32,10 @@ function WatchlistEntryPage() {
 				console.error("Failed to fetch users watchlist entries", error);
 			}
 		};
+
+		if (!userId) {
+			return;
+		}
 		fetchUserWatchlist();
 	}, [userId]);
 
@@ -169,55 +178,67 @@ function WatchlistEntryPage() {
 					My Watchlist
 				</Heading>
 			</Center>
-			<Text
-				color="pink"
-				fontFamily="mainFont"
-				fontWeight="bold"
-				marginLeft="50px">
-				{pageUsername}
-			</Text>
-			<Flex gap="1" direction="column">
-				{userWatchlist.length > 0
-					? userWatchlist.map((entry) => {
-							const entryCategories = categories.filter((category) =>
-								category.media.some(
-									(media) => media.mediaId === entry.media.mediaId,
-								),
-							);
 
-							const entryContentWarnings = contentWarnings.filter((warning) =>
-								warning.media.some(
-									(media) => media.mediaId === entry.media.mediaId,
-								),
-							);
+			<Flex gap="1" direction="column" color="green">
+				{userWatchlist.length > 0 ? (
+					userWatchlist.map((entry) => {
+						const entryCategories = categories.filter((category) =>
+							category.media.some(
+								(media) => media.mediaId === entry.media.mediaId,
+							),
+						);
 
-							return (
-								<Box key={entry.watchlistEntryId}>
-									<WatchlistEntryCard
-										title={entry.media.title}
-										mediaType={entry.media.mediaType}
-										summary={entry.media.summary}
-										releaseDate={entry.media.releaseDate}
-										posterPath={entry.media.posterPath}
-										runtimeMinutes={entry.media.runtimeMinutes}
-										numberOfEpisodes={entry.media.numberOfEpisodes}
-										numberOfSeasons={entry.media.numberOfSeasons}
-										watchlistEntryId={entry.watchlistEntryId}
-										watchStatus={entry.watchStatus}
-										scareRating={entry.scareRating}
-										dateAdded={entry.dateAdded}
-										dateCompleted={entry.dateCompleted}
-										mediaId={entry.media.mediaId}
-										onStatusChange={handleStatusChange}
-										onDelete={handleDeleteEntry}
-										onScareRatingChange={handleScareRatingChange}
-										categories={entryCategories}
-										contentWarnings={entryContentWarnings}
-									/>
-								</Box>
-							);
-						})
-					: "Unable to load watchlist. Please try again."}
+						const entryContentWarnings = contentWarnings.filter((warning) =>
+							warning.media.some(
+								(media) => media.mediaId === entry.media.mediaId,
+							),
+						);
+
+						return (
+							<Box key={entry.watchlistEntryId}>
+								<WatchlistEntryCard
+									title={entry.media.title}
+									mediaType={entry.media.mediaType}
+									summary={entry.media.summary}
+									releaseDate={entry.media.releaseDate}
+									posterPath={entry.media.posterPath}
+									runtimeMinutes={entry.media.runtimeMinutes}
+									numberOfEpisodes={entry.media.numberOfEpisodes}
+									numberOfSeasons={entry.media.numberOfSeasons}
+									watchlistEntryId={entry.watchlistEntryId}
+									watchStatus={entry.watchStatus}
+									scareRating={entry.scareRating}
+									dateAdded={entry.dateAdded}
+									dateCompleted={entry.dateCompleted}
+									mediaId={entry.media.mediaId}
+									onStatusChange={handleStatusChange}
+									onDelete={handleDeleteEntry}
+									onScareRatingChange={handleScareRatingChange}
+									categories={entryCategories}
+									contentWarnings={entryContentWarnings}
+								/>
+							</Box>
+						);
+					})
+				) : (
+					<Center>
+						<Box>
+							<Text>Your watchlist is empty. Start adding some horror! 👻</Text>
+							<Button
+								marginTop="10px"
+								marginLeft="100px"
+								fontFamily="accentFont"
+								fontWeight="bold"
+								border="1px solid"
+								borderColor="paleLavender"
+								bg="purple"
+								_hover={{ bg: "pink" }}
+								onClick={() => navigate("/")}>
+								Browse Horror
+							</Button>
+						</Box>
+					</Center>
+				)}
 			</Flex>
 		</>
 	);

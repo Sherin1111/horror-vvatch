@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import type { Media } from "@/types/media";
 import type { WatchlistEntry } from "@/types/watchlist";
 import type { Review } from "@/types/review";
@@ -31,12 +32,9 @@ const scareRatingCollection = createListCollection({
 	],
 });
 
-const currentUser = {
-	userId: 1,
-	username: "demoUser",
-};
-
 function MediaDetailsPage() {
+	const { user } = useAuth();
+
 	const { mediaId } = useParams<{ mediaId: string }>();
 	const [mediaDetails, setMediaDetails] = useState<Media | null>(null);
 	const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
@@ -50,7 +48,7 @@ function MediaDetailsPage() {
 	const [contentWarnings, setContentWarnings] = useState<ContentWarning[]>([]);
 
 	const currentUserReview = reviews.find(
-		(review) => review.user?.userId === currentUser.userId,
+		(review) => review.user?.userId === user!.userId,
 	);
 
 	useEffect(() => {
@@ -79,7 +77,7 @@ function MediaDetailsPage() {
 		const fetchWatchlistIds = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/watchlist/users/${currentUser.userId}`,
+					`http://localhost:8080/api/watchlist/users/${user!.userId}`,
 				);
 				if (!response.ok) {
 					throw new Error("Failed to fetch added watchlist");
@@ -109,7 +107,7 @@ function MediaDetailsPage() {
 			}
 		};
 		fetchWatchlistIds();
-	}, [mediaId]);
+	}, [mediaId, user]);
 
 	useEffect(() => {
 		const fetchReviews = async () => {
@@ -179,7 +177,7 @@ function MediaDetailsPage() {
 	const handleAddtoWatchlist = async (mediaIdToAdd: number) => {
 		try {
 			const response = await fetch(
-				`http://localhost:8080/api/watchlist/users/${currentUser.userId}/media/${mediaId}`,
+				`http://localhost:8080/api/watchlist/users/${user!.userId}/media/${mediaId}`,
 				{
 					method: "POST",
 					headers: {
@@ -248,7 +246,7 @@ function MediaDetailsPage() {
 				);
 			} else {
 				response = await fetch(
-					`http://localhost:8080/api/review/users/${currentUser.userId}/media/${mediaId}`,
+					`http://localhost:8080/api/review/users/${user!.userId}/media/${mediaId}`,
 					{
 						method: "POST",
 						headers: {
