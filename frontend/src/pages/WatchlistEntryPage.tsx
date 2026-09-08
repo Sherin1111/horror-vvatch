@@ -134,6 +134,29 @@ function WatchlistEntryPage() {
 		}
 	};
 
+	const handleDeleteEntry = async (watchlistEntryId: number) => {
+		try {
+			const response = await fetch(
+				`http://localhost:8080/api/watchlist/${watchlistEntryId}`,
+				{
+					method: "DELETE",
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to delete watchlist entry");
+			}
+
+			setUserWatchlist((perviousWatchlist) =>
+				perviousWatchlist.filter(
+					(entry) => entry.watchlistEntryId !== watchlistEntryId,
+				),
+			);
+		} catch (error) {
+			console.error("Failed to delete watchlist entry", error);
+		}
+	};
+
 	return (
 		<>
 			<Center>
@@ -185,6 +208,7 @@ function WatchlistEntryPage() {
 										dateAdded={entry.dateAdded}
 										dateCompleted={entry.dateCompleted}
 										onStatusChange={handleStatusChange}
+										onDelete={handleDeleteEntry}
 										onScareRatingChange={handleScareRatingChange}
 										categories={entryCategories}
 										contentWarnings={entryContentWarnings}

@@ -37,6 +37,7 @@ interface WatchlistEntryCardProps {
 		watchlistEntryId: number,
 		newScareRating: number,
 	) => void;
+	onDelete: (watchlistEntryId: number) => void;
 }
 const statusCollection = createListCollection({
 	items: [
@@ -74,6 +75,7 @@ function WatchlistEntryCard({
 	contentWarnings,
 	onStatusChange,
 	onScareRatingChange,
+	onDelete,
 }: WatchlistEntryCardProps) {
 	const releaseYear = releaseDate?.slice(0, 4) ?? "Unknown";
 	const displayDateAdded = dateAdded?.slice(0, 10) ?? "Unknown";
@@ -313,6 +315,17 @@ function WatchlistEntryCard({
 								borderColor="paleLavender"
 								_hover={{ bg: "pink" }}>
 								Add Review
+							</Button>
+
+							<Button
+								bg="navy"
+								fontFamily="mainFont"
+								fontWeight="bold"
+								border="1px solid"
+								borderColor="paleLavender"
+								_hover={{ bg: "green" }}
+								onClick={() => onDelete(watchlistEntryId)}>
+								Remove from Watchlist
 							</Button>
 						</Box>
 					</Flex>
