@@ -313,15 +313,19 @@ function WatchlistEntryCard({
 								</Portal>
 							</Select.Root>
 
-							<Button
-								bg="purple"
-								fontFamily="mainFont"
-								fontWeight="bold"
-								border="1px solid"
-								borderColor="paleLavender"
-								_hover={{ bg: "pink" }}>
-								Add Review
-							</Button>
+							<RouterLink to={`/media/${mediaId}`}>
+								<Button
+									paddingLeft="75px"
+									paddingRight="75px"
+									bg="purple"
+									fontFamily="mainFont"
+									fontWeight="bold"
+									border="1px solid"
+									borderColor="paleLavender"
+									_hover={{ bg: "pink" }}>
+									Review
+								</Button>
+							</RouterLink>
 
 							<Button
 								bg="navy"
