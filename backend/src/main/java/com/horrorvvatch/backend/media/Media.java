@@ -39,7 +39,7 @@ public class Media {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "summary")
+    @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
     @Column(name = "release_date")

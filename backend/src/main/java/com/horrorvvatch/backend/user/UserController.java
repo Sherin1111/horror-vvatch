@@ -74,14 +74,15 @@ public class UserController {
 
     // Login: checks user exists
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) {
         try {
             boolean passwordMatches = userService.checkPassword(
             loginRequest.getEmail(), 
             loginRequest.getPassword()
         );
         if (passwordMatches) {
-            return ResponseEntity.ok().build();
+            User user = userService.getUserByEmail(loginRequest.getEmail());
+            return ResponseEntity.ok(user);
         }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (NoSuchElementException e) {
