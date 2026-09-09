@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, Stack, Center, Field, Input } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Stack,
+	Center,
+	Field,
+	Input,
+	Text,
+} from "@chakra-ui/react";
 
 interface LoginFormProps {
 	email: string;
@@ -72,7 +80,7 @@ function LoginForm({
 								color="paleLavender"
 								css={{ "--focus-color": "lime" }}
 							/>
-							<Field.ErrorText>{errors.email}</Field.ErrorText>
+							<Field.ErrorText color="pink">{errors.email}</Field.ErrorText>
 						</Field.Root>
 
 						<Field.Root paddingBottom="20px">
@@ -91,13 +99,17 @@ function LoginForm({
 								color="paleLavender"
 								css={{ "--focus-color": "lime" }}
 							/>
-							<Field.ErrorText>{errors.password}</Field.ErrorText>
+							<Field.ErrorText color="pink">{errors.password}</Field.ErrorText>
 						</Field.Root>
 
 						<Button bg="purple" fontFamily="accentFont" type="submit">
 							Login
 						</Button>
-						{loginMessage && <p>{loginMessage}</p>}
+						{loginMessage && (
+							<Text color="pink" fontFamily="mainFont" mt="12px">
+								{loginMessage}
+							</Text>
+						)}
 					</Stack>
 				</form>
 			</Box>
