@@ -9,7 +9,7 @@ interface MediaCardProps {
 	posterPath: string | null;
 	releaseDate: string | null;
 	isInWatchlist?: boolean;
-	onAddToWatchlist: (mediaId: number) => void;
+	onAddToWatchlist?: (mediaId: number) => void;
 	children?: React.ReactNode;
 }
 
@@ -64,18 +64,20 @@ function MediaCard({
 				</RouterLink>
 			</Card.Body>
 			<Card.Footer bg="navyLight">
-				<Button
-					fontFamily="accentFont"
-					fontWeight="bold"
-					bg={isInWatchlist ? "green" : "purple"}
-					color={isInWatchlist ? "navy" : "cream"}
-					border="1px solid"
-					borderColor="paleLavender"
-					_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
-					disabled={isInWatchlist}
-					onClick={() => onAddToWatchlist(mediaId)}>
-					{isInWatchlist ? "Added" : "Add to Watchlist"}
-				</Button>
+				{onAddToWatchlist && (
+					<Button
+						fontFamily="accentFont"
+						fontWeight="bold"
+						bg={isInWatchlist ? "green" : "purple"}
+						color={isInWatchlist ? "navy" : "cream"}
+						border="1px solid"
+						borderColor="paleLavender"
+						_hover={isInWatchlist ? { bg: "green" } : { bg: "pink" }}
+						disabled={isInWatchlist}
+						onClick={() => onAddToWatchlist(mediaId)}>
+						{isInWatchlist ? "Added" : "Add to Watchlist"}
+					</Button>
+				)}
 			</Card.Footer>
 		</Card.Root>
 	);
