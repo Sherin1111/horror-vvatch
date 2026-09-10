@@ -95,7 +95,6 @@ function WatchlistEntryCard({
 			flexDirection="row"
 			overflow="hidden"
 			width="1200px"
-			marginLeft="50px"
 			marginTop="10px"
 			marginBottom="30px">
 			<Box

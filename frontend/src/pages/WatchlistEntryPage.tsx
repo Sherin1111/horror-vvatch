@@ -195,29 +195,31 @@ function WatchlistEntryPage() {
 						);
 
 						return (
-							<Box key={entry.watchlistEntryId}>
-								<WatchlistEntryCard
-									title={entry.media.title}
-									mediaType={entry.media.mediaType}
-									summary={entry.media.summary}
-									releaseDate={entry.media.releaseDate}
-									posterPath={entry.media.posterPath}
-									runtimeMinutes={entry.media.runtimeMinutes}
-									numberOfEpisodes={entry.media.numberOfEpisodes}
-									numberOfSeasons={entry.media.numberOfSeasons}
-									watchlistEntryId={entry.watchlistEntryId}
-									watchStatus={entry.watchStatus}
-									scareRating={entry.scareRating}
-									dateAdded={entry.dateAdded}
-									dateCompleted={entry.dateCompleted}
-									mediaId={entry.media.mediaId}
-									onStatusChange={handleStatusChange}
-									onDelete={handleDeleteEntry}
-									onScareRatingChange={handleScareRatingChange}
-									categories={entryCategories}
-									contentWarnings={entryContentWarnings}
-								/>
-							</Box>
+							<Center>
+								<Box key={entry.watchlistEntryId}>
+									<WatchlistEntryCard
+										title={entry.media.title}
+										mediaType={entry.media.mediaType}
+										summary={entry.media.summary}
+										releaseDate={entry.media.releaseDate}
+										posterPath={entry.media.posterPath}
+										runtimeMinutes={entry.media.runtimeMinutes}
+										numberOfEpisodes={entry.media.numberOfEpisodes}
+										numberOfSeasons={entry.media.numberOfSeasons}
+										watchlistEntryId={entry.watchlistEntryId}
+										watchStatus={entry.watchStatus}
+										scareRating={entry.scareRating}
+										dateAdded={entry.dateAdded}
+										dateCompleted={entry.dateCompleted}
+										mediaId={entry.media.mediaId}
+										onStatusChange={handleStatusChange}
+										onDelete={handleDeleteEntry}
+										onScareRatingChange={handleScareRatingChange}
+										categories={entryCategories}
+										contentWarnings={entryContentWarnings}
+									/>
+								</Box>
+							</Center>
 						);
 					})
 				) : (
