@@ -2,7 +2,6 @@ package com.horrorvvatch.backend.watchlistEntry;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.horrorvvatch.backend.media.Media;
 import com.horrorvvatch.backend.media.MediaService;
@@ -10,7 +9,6 @@ import com.horrorvvatch.backend.user.User;
 import com.horrorvvatch.backend.user.UserService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +39,8 @@ public class WatchlistEntryController {
     // Gets watchlist entry by ID
     @GetMapping("/{watchlistEntryId}")
     public WatchlistEntry getWatchlistEntryById(@PathVariable Integer watchlistEntryId) {
-        try {
+      
             return watchlistEntryService.getWatchlistEntryById(watchlistEntryId);  
-        } catch (NoSuchElementException exception) {
-           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Watchlist entry not found", exception);
-        }
     }
 
     // Gets all media in a user's watchlist
@@ -58,45 +53,33 @@ public class WatchlistEntryController {
     // Adds media to the user's watchlist 
     @PostMapping("/users/{userId}/media/{mediaId}")
     public ResponseEntity<WatchlistEntry> addMediaToWatchlistEntry(@PathVariable Integer userId, @PathVariable Integer mediaId) {
-        try {
+     
             User user = userService.getUserById(userId);
             Media media = mediaService.getMediaId(mediaId);
             
             WatchlistEntry entry = watchlistEntryService.addMediaToWatchlistEntry(user, media);
             return ResponseEntity.status(HttpStatus.CREATED).body(entry);  
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-        }
     }
     
     // Updates scare rating
     @PutMapping("/{watchlistEntryId}/scare-rating")
     public ResponseEntity<WatchlistEntry> updateScareRating(@PathVariable Integer watchlistEntryId, @RequestBody Integer newScareRating) {
-        try {
-            return ResponseEntity.ok(watchlistEntryService.updateScareRating(watchlistEntryId, newScareRating));
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-        }  
+    
+            return ResponseEntity.ok(watchlistEntryService.updateScareRating(watchlistEntryId, newScareRating)); 
     }
     
     // Updates watch status
     @PutMapping("/{watchlistEntryId}/status")
     public ResponseEntity<WatchlistEntry> updateWatchStatus(@PathVariable Integer watchlistEntryId, @RequestBody WatchStatus newStatus)  {
-        try {
+    
             return ResponseEntity.ok(watchlistEntryService.updateWatchStatus(watchlistEntryId, newStatus));
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-        }
     }
 
     // Deletes entry from user's watchlist
     @DeleteMapping("/{watchlistEntryId}")
     public ResponseEntity<Void> deleteWatchlistEntryById(@PathVariable Integer watchlistEntryId) {
-        try {
+  
             watchlistEntryService.deleteWatchlistEntryById(watchlistEntryId);
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entry not found");
-        }
     }
 }

@@ -1,15 +1,13 @@
 package com.horrorvvatch.backend.contentWarning;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import com.horrorvvatch.backend.media.Media;
 
@@ -36,11 +34,9 @@ public class ContentWarningController {
      // Gets content warning by ID
     @GetMapping("/{warningId}")
     public ContentWarning getContentWarningById(@PathVariable Integer warningId) {
-        try {
+       
             return contentWarningService.getContentWarningById(warningId);
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content warning not found", exception);
-        }
+
     }
     
     // Gets content warning by name
@@ -52,11 +48,8 @@ public class ContentWarningController {
     // Gets media without a specific content warning
     @GetMapping("/{warningId}/exclude-media")
     public Set<Media> getMediaWithoutWarning(@PathVariable Integer warningId) {
-        try {
+     
             return contentWarningService.getMediaWithoutWarning(warningId);
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Content warning not found", exception);
-        }
     }
     
 }

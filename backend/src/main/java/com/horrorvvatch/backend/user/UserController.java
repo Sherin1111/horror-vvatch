@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,11 +36,8 @@ public class UserController {
     // Gets users by id
     @GetMapping("/{userId}")
     public User getUserById(@PathVariable Integer userId) {
-        try {
+       
             return userService.getUserById(userId);
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", exception);
-        }
     }
 
      // Gets user by username
@@ -53,23 +49,16 @@ public class UserController {
     // Gets user by email
     @GetMapping("/by-email")
     public User getUserByEmail(@RequestParam String email) {
-        try {
+
             return userService.getUserByEmail(email);
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not Found", e);
-        }
     }
     
     // Creates new user
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        try {
+     
             User addedUser = userService.addUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedUser);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e); 
-        } 
-     
     }
 
     // Login: checks user exists
@@ -93,22 +82,16 @@ public class UserController {
     // Updates user
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody User user) {
-        try {
+       
             return ResponseEntity.ok(userService.updateUser(userId, user));
-        } catch (NoSuchElementException e) {
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not updated", e);
-        }
     }
 
     //Deletes user by id
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer userId) {
-        try {
+       
             userService.deleteUser(userId);
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found", e);
-        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.horrorvvatch.backend.review;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.horrorvvatch.backend.media.Media;
 import com.horrorvvatch.backend.media.MediaService;
@@ -37,11 +35,8 @@ public class ReviewController {
     // Gets review by ID
     @GetMapping("/{reviewId}")
     public Review getReviewById(@PathVariable Integer reviewId) {
-        try {
+     
             return reviewService.getReviewById(reviewId);
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found");
-        }
     }
 
     // Gets all reviews for a specific media
@@ -55,38 +50,26 @@ public class ReviewController {
     // Adds a review for a specific media
     @PostMapping("/users/{userId}/media/{mediaId}")
     public ResponseEntity<Review> addReviewToMedia(@PathVariable Integer userId, @PathVariable Integer mediaId, @RequestBody String reviewText) {
-        try {
+        
             User user = userService.getUserById(userId);
             Media media = mediaService.getMediaId(mediaId);
             
             Review review = reviewService.addReviewToMedia(user, media, reviewText);
             return ResponseEntity.status(HttpStatus.CREATED).body(review);
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-            
-        }
     }
 
     // Updates existing review
     @PutMapping("/{reviewId}")
     public ResponseEntity<Review> updateReview(@PathVariable Integer reviewId, @RequestBody String updatedReviewText) {
-        try {
+    
             return ResponseEntity.ok(reviewService.updateReview(reviewId, updatedReviewText));
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found", exception);
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
-        }
     }
 
     // Deletes a review
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Integer reviewId) {
-        try {
+       
             reviewService.deleteReview(reviewId);
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found");
-        }
     }
 }
