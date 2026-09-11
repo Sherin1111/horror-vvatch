@@ -2,26 +2,17 @@
 
 ## 1. Project Brief
 
-A full-stack web application designed specifically for horror fans to discover,
-organise, and review horror movies and TV shows. Users can build their own
-personal watchlist by tracking titles through different viewing statuses:
-**Not Watched**, **In Progress**, and **Watched**.
+A full-stack web application designed specifically for horror fans to discover, organise, and review horror movies and TV shows. Users can build their own personal watchlist by tracking titles through different viewing statuses: Not Watched, In Progress, and Watched.
 
-Once a title has been watched, users can rate how frightening they found it using
-a unique **Ghost Rating (👻)** system, where one ghost represents a mildly scary
-experience and five ghosts represent an extremely frightening one.
+Once a title has been watched, users can rate how frightening they found it using a unique Ghost Rating (👻) system, where one ghost represents a mildly scary experience and five ghosts represent an extremely frightening one.
 
-Users can also write their own reviews to express what they liked or disliked
-about a title.
+Users can also write their own reviews to express what they liked or disliked about a title, while being able to view reviews submitted by other users.
 
-Future versions of the application will include a discussion board, personalised
-horror recommendations based on users' viewing history and ratings, along with a
-section highlighting upcoming horror movie and TV releases in cinemas and on
-streaming platforms.
+The application demonstrates full-stack functionality through interactive forms and data-driven components. Users can register and log in through a validated form, browse movies and TV shows displayed in a responsive grid, add and remove titles from their watchlist, update their viewing status and Ghost Rating, and submit and edit reviews. These interactions are connected to a Spring Boot REST API and MySQL database for persistent data storage.
 
 ---
 
-## 2. Project Goals
+## 2. Project Feature Goals
 
 One goal for this project is to have a fun scare rating system so users can rate
 how scary or not a movie or TV show is. It should be something like this:
@@ -32,51 +23,28 @@ how scary or not a movie or TV show is. It should be something like this:
 - 👻👻👻👻
 - 👻👻👻👻👻 — Nightmare fuel
 
-Another goal is to have a fun status system:
+Another goal is to have a status system:
 
-- 🕯️ **Summoning** → `NOT_WATCHED`
-- 🩸 **Surviving** → `IN_PROGRESS`
-- 💀 **Survived** → `WATCHED`
+- **Not Watched** → `NOT_WATCHED`
+- **In Progress** → `IN_PROGRESS`
+- **Watched** → `WATCHED`
 
 ---
 
 ## 3. MVP
 
-| Feature                 | Status      |
-| ----------------------- | ----------- |
-| User registration       | Complete    |
-| User login              | Complete    |
-| User profile management | Complete    |
-| Media browsing/search   | Complete    |
-| Horror categories       | Complete    |
-| Content warnings        | Complete    |
-| Personal watchlist      | Complete    |
-| Watch status            | Complete    |
-| Ghost Rating            | Complete    |
-| Reviews                 | Complete    |
-| Frontend integration    | In progress |
-
----
-
-## 4. Stretch Goals
-
-- TMDB search
-- Movie vs TV show filtering
-- Multiple themes
-- Personalised recommendations
-- Upcoming cinema and streaming releases
-- Favourites list
-- User account deletion
-- Horror books and games
-
-### Discussion and Community Features
-
-I would like to add a discussion/community board for users to share their
-opinions and join discussions with other users on each movie or TV show's page.
-
-While reviews allow users to express what they liked or disliked about a title,
-discussion threads will encourage conversations about theories, favourite scenes,
-hidden details, and other spoiler-friendly topics within a respectful community.
+| Feature               | Status   |
+| --------------------- | -------- |
+| User registration     | Complete |
+| User login            | Complete |
+| Media browsing/search | Complete |
+| Horror categories     | Complete |
+| Content warnings      | Complete |
+| Personal watchlist    | Complete |
+| Watch status          | Complete |
+| Ghost Rating          | Complete |
+| Reviews               | Complete |
+| Frontend integration  | Complete |
 
 ---
 
@@ -126,8 +94,6 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 - **Security:** Spring Security PasswordEncoder
 - **Database:** MySQL
 - **Containerisation:** Docker, Docker Compose
-- **External API:** TMDB (planned)
-- **API Documentation:** Swagger/OpenAPI (planned)
 - **Version Control:** Git, GitHub
 
 ---
@@ -136,7 +102,7 @@ hidden details, and other spoiler-friendly topics within a respectful community.
 
 Horror VVatch uses a full-stack client-server architecture.
 
-The React and TypeScript frontend will communicate with a REST API built
+The React and TypeScript frontend communicates with a REST API built
 using Java and Spring Boot. The backend uses Spring Data JPA to communicate
 with a MySQL relational database.
 
@@ -162,28 +128,27 @@ between different areas of the application.
 
 ## 8. Folder Structure
 
-Current folder structure, to be updated as the project develops:
+The final project folder structure is:
 
 ```text
 horror-vvatch/
-backend/
-└── src/
-    └── main/
-        └── java/
-            └── com/
-                └── horrorvvatch/
-                    └── backend/
-                        ├── config/
-                        ├── contentWarning/
-                        ├── horrorCategory/
-                        ├── media/
-                        ├── review/
-                        ├── user/
-                        └── watchlistEntry/
+├── backend/
+│   ├── src/
+│   │   └── main/
+│   │       └── java/
+│   │           └── com/
+│   │               └── horrorvvatch/
+│   │                   └── backend/
+│   │                       ├── config/
+│   │                       ├── contentWarning/
+│   │                       ├── horrorCategory/
+│   │                       ├── media/
+│   │                       ├── review/
+│   │                       ├── user/
+│   │                       └── watchlistEntry/
 │   ├── pom.xml
-│   └── mvnw
-│
-├── frontend/
+│   ├── mvnw
+│   └── Dockerfile
 │
 ├── database/
 │   ├── schema.sql
@@ -193,9 +158,55 @@ backend/
 │   ├── images/
 │   └── project-documentation.md
 │
+├── frontend/
+├── .env.example
+├── .gitignore
 ├── README.md
 └── docker-compose.yml
 ```
+
+## Frontend Design
+
+Before implementing the frontend, wireframes were created to plan the
+layout and user flow of the application.
+
+The wireframes were used as a guide for the main pages and helped establish
+the structure and navigation of the application before development began.
+
+### Wireframes
+
+The wireframes cover the main user-facing pages, including:
+
+- Home page
+- Browse page
+- Media details page
+- Watchlist
+- Login
+- Registration
+
+The final implementation was developed using React and Chakra UI, with
+some design and layout decisions adapted during development as functionality
+was implemented.
+
+### Home Page
+
+![Home page wireframe](images/home-wireframe.png)
+
+### Browse Page
+
+![Browse page wireframe](images/browse-wireframe.png)
+
+### Media Details Page
+
+![Media details wireframe](images/media-details-wireframe.png)
+
+### Watchlist
+
+![Watchlist wireframe](images/watchlist-wireframe.png)
+
+### Login and Registration
+
+![Login and registration wireframes](images/auth-wireframes.png)
 
 ## 9. Data Flow
 
@@ -205,19 +216,34 @@ own entity, repository, service, and controller where required.
 A typical API request follows this flow:
 
 ```text
-Client (Postman / React)
-        ↓
-HTTP Request
-        ↓
-Controller
-        ↓
-Service
-        ↓
-Repository
-        ↓
-MySQL Database
-        ↓
-JSON Response
+ Request
+Client (React / Postman)
+        │
+        ▼
+   Controller
+        │
+        ▼
+     Service
+        │
+        ▼
+   Repository
+        │
+        ▼
+ MySQL Database
+        │
+        │
+        ▼
+   Repository
+        │
+        ▼
+     Service
+        │
+        ▼
+   Controller
+        │
+        │ JSON Response
+        ▼
+Client (React / Postman)
 ```
 
 The controller handles incoming HTTP requests and responses. Business logic
@@ -233,22 +259,26 @@ with a specified warning.
 
 ## 10. Database Planning
 
-The project has four main tables:
+The project uses six main entity tables:
 
 - `users`
 - `media`
 - `watchlist_entry`
 - `review`
+- `horror_category`
+- `content_warning`
 
-These tables/entities will enable users to find and view media, add titles to
-and manage their watchlist, update their watch status, rate the scariness of a
+These tables/entities enable users to find and view media, add titles to and
+manage their watchlist, update their watch status, rate the scariness of a
 title, write reviews, and read reviews written by other users.
 
-The project also includes the `horror_category` and `content_warning` tables.
+The project also includes two junction tables:
 
-The `media_horror_category` and `media_content_warning` junction tables create
-many-to-many relationships between media titles and their associated horror
-categories and content warnings.
+- `media_horror_category`
+- `media_content_warning`
+
+These junction tables create many-to-many relationships between media titles
+and their associated horror categories and content warnings.
 
 These relationships allow media to be filtered by horror subcategories, such
 as supernatural or slasher, and allow titles to be filtered based on content
@@ -284,10 +314,12 @@ The generated database includes:
 
 The initial seed data contains:
 
-- 5 movies
-- 5 TV shows
+- 45 horror movies
+- 21 horror TV shows
+- 10 sample users
 - 26 horror categories
 - 30 content warnings
+- Sample reviews
 - Media-to-category relationships
 - Media-to-content-warning relationships
 
@@ -320,9 +352,9 @@ between the database tables used in Horror VVatch.
 
 ## 11. API Design
 
-The following endpoints define the current and planned REST API for Horror VVatch.
+The following endpoints define the current REST API for Horror VVatch.
 
-The User, Media, Horror Category, Content Warning, Watchlist and Review endpoints have been implemented and tested using Postman.
+The User, Media, Horror Category, Content Warning, Watchlist and Review endpoints have been implemented. The API was tested using Postman, including successful requests, validation, relationship queries and error handling.
 
 ### Users
 
@@ -383,6 +415,8 @@ The User, Media, Horror Category, Content Warning, Watchlist and Review endpoint
 | POST   | `/api/review/users/{userId}/media/{mediaId}` | Add a review                      |
 | PUT    | `/api/review/{reviewId}`                     | Update a review                   |
 | DELETE | `/api/review/{reviewId}`                     | Delete a review                   |
+
+Detailed request parameters, request bodies, responses and tested status codes are documented in the API Testing section below, with Postman evidence for the implemented functionality.
 
 ---
 
@@ -557,7 +591,6 @@ Users can:
 - Create a review
 - View reviews for a media title
 - Edit an existing review
-- Delete a review
 
 Review text cannot be empty.
 
@@ -571,26 +604,23 @@ and rate it without having to leave a written review.
 
 ## 13. API Testing
 
-The User, Media, Horror Category, and Content Warning APIs were tested using
-Postman. Testing included successful requests, search functionality,
-relationship queries, filtering behaviour, validation, and error responses.
+The User, Media, Horror Category, Content Warning, Watchlist and Review APIs
+were tested using Postman. Testing included successful requests, search
+functionality, relationship queries, filtering behaviour, validation and
+error responses.
 
 ### User API
 
-| Test                          | Expected result         | Result |
-| ----------------------------- | ----------------------- | ------ |
-| Register valid user           | `201 Created`           | Pass   |
-| Retrieve users                | `200 OK`                | Pass   |
-| Retrieve user by ID           | `200 OK`                | Pass   |
-| Search by username            | Matching users returned | Pass   |
-| Retrieve by email             | Matching user returned  | Pass   |
-| Update user                   | `200 OK`                | Pass   |
-| Delete user                   | `204 No Content`        | Pass   |
-| Retrieve unknown user         | `404 Not Found`         | Pass   |
-| Register without password     | `400 Bad Request`       | Pass   |
-| Login with valid credentials  | `200 OK`                | Pass   |
-| Login with incorrect password | `401 Unauthorized`      | Pass   |
-| Login with unknown email      | `401 Unauthorized`      | Pass   |
+| Method   | Endpoint                                | Description                  | Request Body / Params                                              | Success Response                      |
+| -------- | --------------------------------------- | ---------------------------- | ------------------------------------------------------------------ | ------------------------------------- |
+| `POST`   | `/api/users`                            | Register a new user          | JSON: `username`, `firstName`, `lastName`, `email`, `passwordHash` | `201 Created` — returns created user  |
+| `GET`    | `/api/users`                            | Get all users                | None                                                               | `200 OK` — returns list of users      |
+| `GET`    | `/api/users/{userId}`                   | Get a user by ID             | Path: `userId`                                                     | `200 OK` — returns user               |
+| `GET`    | `/api/users/search?username={username}` | Search for users by username | Query: `username`                                                  | `200 OK` — returns matching users     |
+| `GET`    | `/api/users/by-email?email={email}`     | Find a user by email         | Query: `email`                                                     | `200 OK` — returns user               |
+| `POST`   | `/api/users/login`                      | Authenticate a user          | JSON: `email`, `password`                                          | `200 OK` — returns authenticated user |
+| `PUT`    | `/api/users/{userId}`                   | Update a user's details      | Path: `userId` + user data                                         | `200 OK`                              |
+| `DELETE` | `/api/users/{userId}`                   | Delete a user                | Path: `userId`                                                     | `204 No Content`                      |
 
 #### User Registration and Password Encoding
 
@@ -613,13 +643,11 @@ addresses were also tested and correctly returned `401 Unauthorized`._
 
 ### Media API
 
-| Test                     | Expected result         | Result |
-| ------------------------ | ----------------------- | ------ |
-| Retrieve all media       | `200 OK`                | Pass   |
-| Retrieve media by ID     | `200 OK`                | Pass   |
-| Search title for "witch" | Matching media returned | Pass   |
-| Search title for "super" | Matching media returned | Pass   |
-| Retrieve unknown media   | `404 Not Found`         | Pass   |
+| Method | Endpoint                          | Description              | Request Body / Params | Success Response                  |
+| ------ | --------------------------------- | ------------------------ | --------------------- | --------------------------------- |
+| `GET`  | `/api/media`                      | Get all media            | None                  | `200 OK` — returns list of media  |
+| `GET`  | `/api/media/{mediaId}`            | Get one media item by ID | Path: `mediaId`       | `200 OK` — returns media          |
+| `GET`  | `/api/media/search?title={title}` | Search media by title    | Query: `title`        | `200 OK` — returns matching media |
 
 #### Retrieve Media by ID
 
@@ -638,14 +666,10 @@ _Requesting a media title with an ID that does not exist returns `404 Not Found`
 
 ### Horror Category API
 
-| Test                                | Expected result              | Result |
-| ----------------------------------- | ---------------------------- | ------ |
-| Retrieve all horror categories      | `200 OK`                     | Pass   |
-| Retrieve horror category by ID      | `200 OK`                     | Pass   |
-| Search horror category by name      | Matching categories returned | Pass   |
-| Retrieve media by category          | Matching media returned      | Pass   |
-| Retrieve unknown category           | `404 Not Found`              | Pass   |
-| Retrieve media for unknown category | `404 Not Found`              | Pass   |
+| Method | Endpoint                             | Description                           | Request Body / Params | Success Response              |
+| ------ | ------------------------------------ | ------------------------------------- | --------------------- | ----------------------------- |
+| `GET`  | `/api/categories/{categoryId}`       | Get a horror category by ID           | Path: `categoryId`    | `200 OK`                      |
+| `GET`  | `/api/categories/{categoryId}/media` | Get all media belonging to a category | Path: `categoryId`    | `200 OK` — returns media list |
 
 #### Filter media by category
 
@@ -657,14 +681,10 @@ _Requesting a media title with an ID that does not exist returns `404 Not Found`
 
 ### Content Warning API
 
-| Test                                | Expected result            | Result |
-| ----------------------------------- | -------------------------- | ------ |
-| Retrieve all content warnings       | `200 OK`                   | Pass   |
-| Retrieve content warning by ID      | `200 OK`                   | Pass   |
-| Search content warning by name      | Matching warnings returned | Pass   |
-| Exclude media by content warning    | Filtered media returned    | Pass   |
-| Retrieve unknown content warning    | `404 Not Found`            | Pass   |
-| Exclude media using unknown warning | `404 Not Found`            | Pass   |
+| Method | Endpoint                                          | Description                                         | Request Body / Params | Success Response              |
+| ------ | ------------------------------------------------- | --------------------------------------------------- | --------------------- | ----------------------------- |
+| `GET`  | `/api/content-warnings/{warningId}`               | Get a content warning by ID                         | Path: `warningId`     | `200 OK`                      |
+| `GET`  | `/api/content-warnings/{warningId}/exclude-media` | Get media that does not contain a specified warning | Path: `warningId`     | `200 OK` — returns media list |
 
 #### Exclude Media with Blood Warning
 
@@ -674,16 +694,16 @@ _Requesting a media title with an ID that does not exist returns `404 Not Found`
 
 ![Postman response showing content warning not found](images/content-warning-error.png)
 
-### Watchlist
+### Watchlist API
 
-| Test                                     | Expected result  | Result |
-| ---------------------------------------- | ---------------- | ------ |
-| Retrieve watchlist entry by ID           | `200 OK`         | Pass   |
-| Retrieve all media in a user's watchlist | `200 OK`         | Pass   |
-| Adds media to the user's watchlist       | `201 Created`    | Pass   |
-| Updates scare rating                     | `200 OK`         | Pass   |
-| Updates watch status                     | `200 OK`         | Pass   |
-| Deletes entry from user's watchlist      | `204 No Content` | Pass   |
+| Method   | Endpoint                                         | Description                        | Request Body / Params                         | Success Response             |
+| -------- | ------------------------------------------------ | ---------------------------------- | --------------------------------------------- | ---------------------------- |
+| `GET`    | `/api/watchlist/{watchlistEntryId}`              | Get a watchlist entry              | Path: `watchlistEntryId`                      | `200 OK`                     |
+| `GET`    | `/api/watchlist/users/{userId}`                  | Get a user's watchlist             | Path: `userId`                                | `200 OK` — returns watchlist |
+| `POST`   | `/api/watchlist/users/{userId}/media/{mediaId}`  | Add media to a user's watchlist    | Path: `userId`, `mediaId`                     | `201 Created`                |
+| `PUT`    | `/api/watchlist/{watchlistEntryId}/scare-rating` | Update scare rating                | Path: `watchlistEntryId`; body: integer `1–5` | `200 OK`                     |
+| `PUT`    | `/api/watchlist/{watchlistEntryId}/status`       | Update watch status                | Path: `watchlistEntryId`; body: watch status  | `200 OK`                     |
+| `DELETE` | `/api/watchlist/{watchlistEntryId}`              | Remove a media item from watchlist | Path: `watchlistEntryId`                      | `204 No Content`             |
 
 #### Media added to a users watchlist
 
@@ -693,19 +713,19 @@ _Requesting a media title with an ID that does not exist returns `404 Not Found`
 
 ![Entry status changed to watched](images/changed-status-watched.png)
 
-#### Changed scare rating from 0 to 4
+#### Changed scare rating from 1 to 5
 
 ![Changed scare rating to 4](images/scare-rating-4.png)
 
-### Reviews
+### Review API
 
-| Test                                      | Expected result  | Result |
-| ----------------------------------------- | ---------------- | ------ |
-| Retrieve a review by ID                   | `200 OK`         | Pass   |
-| Retrieve all reviews for a specific media | `200 OK`         | Pass   |
-| Adds a review for a specific media        | `201 Created`    | Pass   |
-| Updates existing review                   | `200 OK`         | Pass   |
-| Deletes a review                          | `204 No Content` | Pass   |
+| Method   | Endpoint                                     | Description                      | Request Body / Params                        | Success Response                   |
+| -------- | -------------------------------------------- | -------------------------------- | -------------------------------------------- | ---------------------------------- |
+| `GET`    | `/api/review/{reviewId}`                     | Get a review by ID               | Path: `reviewId`                             | `200 OK`                           |
+| `GET`    | `/api/review/media/{mediaId}`                | Get all reviews for a media item | Path: `mediaId`                              | `200 OK` — returns list of reviews |
+| `POST`   | `/api/review/users/{userId}/media/{mediaId}` | Add a review for a media item    | Path: `userId`, `mediaId`; body: review text | `201 Created`                      |
+| `PUT`    | `/api/review/{reviewId}`                     | Update a review                  | Path: `reviewId`; body: review text          | `200 OK`                           |
+| `DELETE` | `/api/review/{reviewId}`                     | Delete a review                  | Path: `reviewId`                             | `204 No Content`                   |
 
 #### Adds a review to a specific media
 
@@ -760,17 +780,103 @@ relationships were tested successfully.
 
 ---
 
-## 15. Future Improvements
+## 15. Docker Integration Testing
+
+The application was tested using a fresh Docker environment.
+
+Testing included:
+
+- Starting the application using Docker Compose
+- MySQL healthcheck
+- Backend connection to the Docker MySQL container
+- Automatic Hibernate schema creation
+- Loading seed data using `data.sql`
+- Frontend loading through Nginx
+- User registration
+- User login/logout
+- Media browsing
+- Watchlist functionality
+- Watch status updates
+- Ghost Rating updates
+- Review creation
+
+## Scalability, Performance & Accessibility
+
+The current application is designed as a functional MVP. If Horror VVatch were released to a larger number of users, the application would need to be improved to handle increased traffic, larger amounts of data and more users accessing the application at the same time.
+
+### Scalability
+
+Currently, the application uses one Spring Boot backend connected to a MySQL database. If the number of users increased significantly, a single backend could receive a much higher number of requests.
+
+A future version could run multiple instances of the backend so that requests can be handled by more than one application at the same time. This would help the application handle increased traffic and reduce the risk of one application instance becoming overloaded.
+
+### Handling Multiple Users
+
+If many users tried to submit reviews or update their watchlists at the same time, the backend and database would need to handle these requests safely while maintaining data consistency.
+
+The existing database constraints help protect the data, such as preventing a user from creating more than one review for the same media. As the number of users increased, database performance and the number of simultaneous connections would need to be monitored and managed.
+
+### Caching
+
+Caching could be used to store frequently requested information temporarily so that the application does not need to request the same information from the database repeatedly.
+
+For example, horror categories that do not change frequently could be cached and returned more quickly.
+
+The database would remain the main source of truth. When information changes, the cached version would need to be updated or cleared so that users do not receive outdated information.
+
+### Monitoring & Metrics
+
+As the application grows, it would be important to monitor how well it is performing.
+
+Tools such as **Prometheus** could collect information about the application, while **Grafana** could display this information in dashboards.
+
+Useful metrics could include:
+
+- How quickly API requests are completed
+- Number of requests
+- Number of errors
+- CPU and memory usage
+- Database performance
+
+This would help identify areas of the application that are becoming slow or overloaded.
+
+### Accessibility
+
+Accessibility would also be important if Horror VVatch were made available to a wider audience.
+
+Future improvements could include:
+
+- Ensuring sufficient colour contrast
+- Supporting keyboard navigation
+- Providing visible focus states
+- Using accessible labels for forms and buttons
+- Supporting screen readers
+- Providing clear error messages
+- Avoiding colour as the only way to communicate information
+- Testing the application against WCAG accessibility guidelines
+
+For example, watchlist statuses should not rely only on different colours. The text labels **Not Watched**, **In Progress** and **Watched** should remain clear for users with colour-vision deficiencies.
+
+## 16. Future Improvements
 
 The following features are planned after the MVP is complete:
 
+- Improve review state handling so edited reviews remain immediately reflected after page refresh.
+- Add frontend functionality allowing users to delete their own reviews.
+- Add an About/Introduction page explaining the purpose of Horror VVatch and the concept behind the application.
 - Integrate the TMDB API to automatically retrieve movie and TV show data.
-- Display official poster images rather than placeholder values.
-- Add frontend controls for filtering media by horror category.
-- Add frontend controls for excluding media by content warning.
+- Add pagination or infinite scrolling to improve browsing performance and navigation as the media catalogue grows.
 - Add personalised horror recommendations.
 - Add a discussion/community board for each media title.
 - Display upcoming horror movie and TV releases.
+- Display where to stream or watch the movie/TV show
+- Media details: director, writer, actors, etc.
+- Age rating
 - Support multiple application themes.
 - Add a favourites list.
 - Expand the application to include horror books and games.
+
+### Testing Improvements
+
+- Expand automated testing for frontend components and backend functionality,
+  including additional edge cases and integration tests.
